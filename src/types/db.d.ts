@@ -8,11 +8,14 @@ interface BaseTable {
 
 interface InviteOrg extends BaseTable {
     email: ColumnType<string>;
+    invite_token: ColumnType<string>;
     is_accepted: ColumnType<boolean>;
 }
 
 interface InviteUser extends BaseTable {
     email: ColumnType<string>;
+    role_id: ColumnType<string>;
+    invite_token: ColumnType<string>;
     is_accepted: ColumnType<boolean>;
     org_id: ColumnType<string>;
 }
@@ -67,15 +70,7 @@ interface Orgs extends BaseTable {
     slug: ColumnType<string>;
     size?: ColumnType<string | null>;
     website?: ColumnType<string | null>;
-    creator_id?: ColumnType<string>;
     metadata: ColumnType<Record<string, any>>;
-}
-
-interface AccessToken extends BaseTable {
-    org_id: ColumnType<string>;
-    user_id: ColumnType<string>;
-    token: ColumnType<string>;
-    expires_at: ColumnType<Date | null>;
 }
 
 export interface Database {

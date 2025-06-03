@@ -2,6 +2,10 @@
   "name": "envsync-api",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --hot src/entrypoint.ts",
+    "db": "bun run scripts/migrate.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/mustache": "^4.2.6",
