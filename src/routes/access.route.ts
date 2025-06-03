@@ -1,10 +1,12 @@
 import { Hono } from "hono";
 
+import { AccessController } from "@/controllers/access.controller";
+
 const app = new Hono();
 
-app.get("/cli")
-app.get("/cli/callback")
-app.get("/web")
-app.get("/web/callback")
+app.get("/cli", AccessController.createCliLogin)
+app.get("/cli/callback", AccessController.callbackCliLogin)
+app.get("/web", AccessController.createWebLogin)
+app.get("/web/callback", AccessController.callbackWebLogin)
 
 export default app;

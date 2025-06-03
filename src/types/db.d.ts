@@ -60,8 +60,6 @@ interface Users extends BaseTable {
     profile_picture_url?: ColumnType<string | null>;
     last_login?: ColumnType<Date | null>;
     is_active: ColumnType<boolean>;
-    is_verified: ColumnType<boolean>;
-    metadata: ColumnType<Record<string, any>>;
 }
 
 interface Orgs extends BaseTable {

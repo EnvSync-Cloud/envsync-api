@@ -27,7 +27,6 @@ export class AccessController {
         try {
             const {
                 AUTH0_CLIENT_ID,
-                AUTH0_DOMAIN,
                 AUTH0_CLI_REDIRECT_URI,
                 AUTH0_CLIENT_SECRET,
             } = config;
@@ -45,9 +44,9 @@ export class AccessController {
                 redirect_uri: AUTH0_CLI_REDIRECT_URI,
             });
 
-            const accessToken = tokenResponse.data.access_token;
+            const tokenData = tokenResponse.data;
 
-            return c.json({ message: 'CLI login callback successful.', accessToken }, 200);
+            return c.json({ message: 'CLI login callback successful.', tokenData }, 200);
         }
         catch (err) {
             console.error(err);
