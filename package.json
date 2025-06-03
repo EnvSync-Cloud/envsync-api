@@ -1,0 +1,29 @@
+{
+  "name": "envsync-api",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/mustache": "^4.2.6",
+    "@types/pg": "^8.15.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.821.0",
+    "@aws-sdk/client-sesv2": "^3.821.0",
+    "@aws-sdk/lib-storage": "^3.821.0",
+    "@scalar/hono-api-reference": "^0.9.1",
+    "auth0": "^4.24.0",
+    "hono": "^4.7.11",
+    "hono-openapi": "^0.4.8",
+    "kysely": "^0.28.2",
+    "mustache": "^4.2.0",
+    "node-cache": "^5.1.2",
+    "pg": "^8.16.0",
+    "pino": "^9.7.0",
+    "redis": "^5.5.5",
+    "zod": "^3.25.48"
+  }
+}
