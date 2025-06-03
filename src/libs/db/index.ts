@@ -125,7 +125,7 @@ export class DB {
 				const files = await fs.readdir(backupFolder);
 				backupFile = files.toSorted().reverse()[0];
 			} catch (e) {
-				infoLogs('No backup files found', LogTypes.ERROR, 'DB:PLATFORM');
+				infoLogs('No backup files found', LogTypes.ERROR, 'DB');
 				return;
 			}
 		}
@@ -142,6 +142,17 @@ export class DB {
 
 			// @ts-expect-error
 			await db.insertInto(table).values(rows).execute();
+		}
+	}
+
+	// run 'select 1' and return true if the database is reachable
+	static async healthCheck() {
+		const db = await this.getInstance();
+		try {
+			await sql`SELECT 1 as "status"`.execute(db);
+			infoLogs('Database Connected', LogTypes.LOGS, 'DB');
+		} catch (error) {
+			infoLogs('Database Unreachable', LogTypes.ERROR, 'DB');
 		}
 	}
 }
