@@ -24,7 +24,7 @@ export class OnboardingController {
                 accept_link: `https://app.envsync.cloud/onboarding/accept-org-invite/${invite_data}`,
             })
 
-			return c.json({ message: "Organization invite created successfully.", invite_data }, 201);
+			return c.json({ message: "Organization invite created successfully." }, 201);
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
