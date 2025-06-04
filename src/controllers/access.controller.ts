@@ -18,9 +18,10 @@ export class AccessController {
 			}
 		}
 	};
+
 	public static readonly callbackCliLogin = async (c: Context) => {
 		try {
-			const { AUTH0_CLIENT_ID, AUTH0_CLI_REDIRECT_URI, AUTH0_CLIENT_SECRET } = config;
+			const { AUTH0_CLIENT_ID, AUTH0_CLI_REDIRECT_URI, AUTH0_CLIENT_SECRET, AUTH0_CLI_CALLBACK_URL } = config;
 
 			const { code } = c.req.query();
 
@@ -37,7 +38,7 @@ export class AccessController {
 
 			const tokenData = tokenResponse.data;
 
-			return c.json({ message: "CLI login callback successful.", tokenData }, 200);
+			return c.redirect(AUTH0_CLI_CALLBACK_URL + `?id_token=${tokenData.id_token}`, 302);
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
@@ -45,6 +46,7 @@ export class AccessController {
 			}
 		}
 	};
+
 	public static readonly createWebLogin = async (c: Context) => {
 		try {
 			const { AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_WEB_REDIRECT_URI } = config;
@@ -59,9 +61,10 @@ export class AccessController {
 			}
 		}
 	};
+
 	public static readonly callbackWebLogin = async (c: Context) => {
 		try {
-			const { AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_WEB_REDIRECT_URI } = config;
+			const { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_WEB_REDIRECT_URI, AUTH0_WEB_CALLBACK_URL } = config;
 
 			const { code } = c.req.query();
 
@@ -71,13 +74,14 @@ export class AccessController {
 
 			const tokenResponse = await auth0.oauth.authorizationCodeGrant({
 				client_id: AUTH0_CLIENT_ID,
+				client_secret: AUTH0_CLIENT_SECRET,
 				code,
 				redirect_uri: AUTH0_WEB_REDIRECT_URI,
 			});
 
 			const tokenData = tokenResponse.data;
 
-			return c.json({ message: "Web login callback successful.", tokenData }, 200);
+			return c.redirect(AUTH0_WEB_CALLBACK_URL + `?access_token=${tokenData.id_token}`, 302);
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
@@ -85,4 +89,50 @@ export class AccessController {
 			}
 		}
 	};
+
+    public static readonly createApiLogin = async (c: Context) => {
+        try {
+            const { AUTH0_CLIENT_ID, AUTH0_DOMAIN, AUTH0_API_REDIRECT_URI } = config;
+
+            const loginUrl = `https://${AUTH0_DOMAIN}/authorize?client_id=${AUTH0_CLIENT_ID}&response_type=code&scope=openid%20email%20profile&redirect_uri=${encodeURIComponent(AUTH0_API_REDIRECT_URI)}`;
+
+            return c.json({ message: "API login created successfully.", loginUrl }, 201);
+        } catch (err) {
+            console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+        }
+    }
+
+    public static readonly callbackApiLogin = async (c: Context) => {
+        try {
+            const { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_API_REDIRECT_URI } = config;
+
+            const { code } = c.req.query();
+
+            if (!code) {
+                return c.json({ error: "Code is required." }, 400);
+            }
+
+            const tokenResponse = await auth0.oauth.authorizationCodeGrant({
+                client_id: AUTH0_CLIENT_ID,
+                client_secret: AUTH0_CLIENT_SECRET,
+                code,
+                redirect_uri: AUTH0_API_REDIRECT_URI,
+            });
+
+            const tokenData = tokenResponse.data;
+
+            return c.json({
+                message: "API login callback successful.",
+                tokenData,
+            }, 200);
+        } catch (err) {
+            console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+        }
+    }
 }
