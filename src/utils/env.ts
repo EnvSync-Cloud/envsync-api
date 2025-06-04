@@ -34,6 +34,7 @@ export const env = z.object({
 	AUTH0_ISSUER_BASE_URL: z.string(),
 	AUTH0_MANAGEMENT_CLIENT_ID: z.string(),
 	AUTH0_MANAGEMENT_CLIENT_SECRET: z.string(),
+	// Auth0 CLI and Web redirect URIs
 	AUTH0_CLI_REDIRECT_URI: z.string(),
 	AUTH0_WEB_REDIRECT_URI: z.string(),
 	AUTH0_CLI_CALLBACK_URL: z.string(),
