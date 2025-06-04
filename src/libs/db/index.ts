@@ -1,13 +1,13 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import fs from "node:fs/promises";
+import path from "node:path";
 
-import { FileMigrationProvider, Kysely, Migrator, sql } from 'kysely';
+import { FileMigrationProvider, Kysely, Migrator, sql } from "kysely";
 
-import infoLogs, { LogTypes } from '@/libs/logger';
-import { type Database } from '@/types/db';
-import { config } from '@/utils/env';
+import infoLogs, { LogTypes } from "@/libs/logger";
+import { type Database } from "@/types/db";
+import { config } from "@/utils/env";
 
-import { PostgresDB } from './adapters/postgresql';
+import { PostgresDB } from "./adapters/postgresql";
 
 export class DB {
 	private static kysely: Promise<Kysely<Database>> | undefined;
@@ -22,7 +22,7 @@ export class DB {
 	static async _getInstance(): Promise<Kysely<Database>> {
 		const kysely: Kysely<Database> = await PostgresDB.getInstance();
 
-		await this.migrate(kysely, config.DB_AUTO_MIGRATE === 'true');
+		await this.migrate(kysely, config.DB_AUTO_MIGRATE === "true");
 
 		return kysely;
 	}
@@ -44,11 +44,11 @@ export class DB {
 			provider: new FileMigrationProvider({
 				fs,
 				path,
-				migrationFolder: new URL(import.meta.resolve('./migrations')).pathname,
+				migrationFolder: new URL(import.meta.resolve("./migrations")).pathname,
 			}),
 		});
 
-		infoLogs('Running migrations...', LogTypes.LOGS, 'DB:Kysely');
+		infoLogs("Running migrations...", LogTypes.LOGS, "DB:Kysely");
 
 		const { results, error } = (await migrator.migrateToLatest()) as {
 			results: { migrationName: string; status: string }[] | null;
@@ -56,14 +56,14 @@ export class DB {
 		};
 
 		if (error) {
-			infoLogs(error.message, LogTypes.CUSTOMOBJ, 'DB:Kysely');
+			infoLogs(error.message, LogTypes.CUSTOMOBJ, "DB:Kysely");
 		} else if (results?.length) {
-			infoLogs('Migrations finished!', LogTypes.LOGS, 'DB:Kysely');
+			infoLogs("Migrations finished!", LogTypes.LOGS, "DB:Kysely");
 			for (const { migrationName, status } of results) {
-				infoLogs(`  - ${migrationName}: ${status}`, LogTypes.LOGS, 'DB:Kysely');
+				infoLogs(`  - ${migrationName}: ${status}`, LogTypes.LOGS, "DB:Kysely");
 			}
 		} else {
-			infoLogs('Everything up-to-date.', LogTypes.LOGS, 'DB:Kysely');
+			infoLogs("Everything up-to-date.", LogTypes.LOGS, "DB:Kysely");
 		}
 	}
 
@@ -81,7 +81,7 @@ export class DB {
 			provider: new FileMigrationProvider({
 				fs,
 				path,
-				migrationFolder: new URL(import.meta.resolve('./migrations')).pathname,
+				migrationFolder: new URL(import.meta.resolve("./migrations")).pathname,
 			}),
 		});
 	}
@@ -91,7 +91,7 @@ export class DB {
 
 		const tables = await db.introspection.getTables();
 		const publicTables = tables
-			.filter(table => table.schema === 'public' && !table.isView)
+			.filter(table => table.schema === "public" && !table.isView)
 			.map(table => table.name);
 
 		const data = await Promise.all(
@@ -106,7 +106,7 @@ export class DB {
 			}),
 		);
 
-		const backupFolder = path.join(__dirname, 'backups');
+		const backupFolder = path.join(__dirname, "backups");
 		await fs.mkdir(backupFolder, { recursive: true });
 		await fs.writeFile(
 			path.join(backupFolder, `${new Date().getTime()}.json`),
@@ -119,19 +119,19 @@ export class DB {
 	}
 
 	static async restore(backupFile?: string) {
-		const backupFolder = path.join(__dirname, 'backups');
+		const backupFolder = path.join(__dirname, "backups");
 		if (!backupFile) {
 			try {
 				const files = await fs.readdir(backupFolder);
 				backupFile = files.toSorted().reverse()[0];
 			} catch (e) {
-				infoLogs('No backup files found', LogTypes.ERROR, 'DB');
+				infoLogs("No backup files found", LogTypes.ERROR, "DB");
 				return;
 			}
 		}
 
 		const backup = JSON.parse(
-			await fs.readFile(path.resolve(backupFolder, backupFile), 'utf-8'),
+			await fs.readFile(path.resolve(backupFolder, backupFile), "utf-8"),
 		) as Record<string, { columns: object; rows: object }>;
 
 		const db = await this.getInstance();
@@ -150,9 +150,9 @@ export class DB {
 		const db = await this.getInstance();
 		try {
 			await sql`SELECT 1 as "status"`.execute(db);
-			infoLogs('Database Connected', LogTypes.LOGS, 'DB');
+			infoLogs("Database Connected", LogTypes.LOGS, "DB");
 		} catch (error) {
-			infoLogs('Database Unreachable', LogTypes.ERROR, 'DB');
+			infoLogs("Database Unreachable", LogTypes.ERROR, "DB");
 		}
 	}
 }

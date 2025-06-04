@@ -14,74 +14,70 @@ import { config } from "@/utils/env";
 const app = new Hono();
 
 app.use(
-    cors({
-        origin: "*",
-        allowHeaders: ["Content-Type", "Authorization"],
-        allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        maxAge: 3600,
-    })
+	cors({
+		origin: "*",
+		allowHeaders: ["Content-Type", "Authorization"],
+		allowMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+		maxAge: 3600,
+	}),
 );
 
 app.use(logger());
 app.use(prettyJSON());
 app.use(poweredBy());
 
-app.get("/health", (ctx) => ctx.json({ status: "ok!" }));
+app.get("/health", ctx => ctx.json({ status: "ok!" }));
 
-app.get("/favicon.ico", async (ctx) => {
-    return ctx.redirect("https://hono.dev/images/logo-small.png");
+app.get("/favicon.ico", async ctx => {
+	return ctx.redirect("https://hono.dev/images/logo-small.png");
 });
 
 app.route("/api", routes);
 
 app.get(
-    "/openapi",
-    openAPISpecs(app, {
-      documentation: {
-        info: {
-          title: "EnvSync API",
-          version: "0.0.0",
-          description: "API Documentation",
-        },
-        components: {
-          securitySchemes: {
-            bearerAuth: {
-              type: "http",
-              scheme: "bearer",
-              bearerFormat: "JWT",
-            },
-          },
-        },
-        security: [
-          {
-            bearerAuth: [],
-          },
-        ],
-        servers: [
-          {
-            url: "http://localhost:" + config.PORT,
-            description: "Local server",
-          },
-        ],
-      },
-    })
+	"/openapi",
+	openAPISpecs(app, {
+		documentation: {
+			info: {
+				title: "EnvSync API",
+				version: "0.0.0",
+				description: "API Documentation",
+			},
+			components: {
+				securitySchemes: {
+					bearerAuth: {
+						type: "http",
+						scheme: "bearer",
+						bearerFormat: "JWT",
+					},
+				},
+			},
+			security: [
+				{
+					bearerAuth: [],
+				},
+			],
+			servers: [
+				{
+					url: "http://localhost:" + config.PORT,
+					description: "Local server",
+				},
+			],
+		},
+	}),
 );
 
 app.get(
-    "/docs",
-    Scalar({
-      theme: "elysiajs",
-      url: "/openapi",
-      title: "EnvSync API via Scalar",
-    })
+	"/docs",
+	Scalar({
+		theme: "elysiajs",
+		url: "/openapi",
+		title: "EnvSync API via Scalar",
+	}),
 );
 
 showRoutes(app);
 
-log(
-    `Server started at http://localhost:${config.PORT}`,
-    LogTypes.LOGS,
-    "Entrypoint"
-);
+log(`Server started at http://localhost:${config.PORT}`, LogTypes.LOGS, "Entrypoint");
 
 export { app };

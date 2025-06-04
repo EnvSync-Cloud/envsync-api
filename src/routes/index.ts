@@ -1,14 +1,14 @@
 import { Hono } from "hono";
 
-import accessRoute from "./access.route"
-import appRoute from "./app.route"
-import audit_logRoute from "./audit_log.route"
-import authRoute from "./auth.route"
-import env_typeRoute from "./env_type.route"
-import envRoute from "./env.route"
-import onboardingRoute from "./onboarding.route"
-import orgRoute from "./org.route"
-import userRoute from "./user.route"
+import accessRoute from "./access.route";
+import appRoute from "./app.route";
+import audit_logRoute from "./audit_log.route";
+import authRoute from "./auth.route";
+import env_typeRoute from "./env_type.route";
+import envRoute from "./env.route";
+import onboardingRoute from "./onboarding.route";
+import orgRoute from "./org.route";
+import userRoute from "./user.route";
 
 const app = new Hono();
 

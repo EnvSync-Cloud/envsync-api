@@ -1,11 +1,11 @@
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 
-import Mustache from 'mustache';
+import Mustache from "mustache";
 
 const getMailTemplate = async (): Promise<string> => {
-	const htmlFiles = ['index', 'header', 'body', 'footer'];
+	const htmlFiles = ["index", "header", "body", "footer"];
 	const [indexHTML, headerHTML, bodyHTML, footerHTML] = await Promise.all(
-		htmlFiles.map(fileName => fs.readFile(`${__dirname}/${fileName}.html`, 'utf8')),
+		htmlFiles.map(fileName => fs.readFile(`${__dirname}/${fileName}.html`, "utf8")),
 	);
 	return await Mustache.render(indexHTML, {
 		header: headerHTML,

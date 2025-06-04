@@ -1,9 +1,9 @@
-import { type Bindings, pino } from 'pino';
+import { type Bindings, pino } from "pino";
 
 export enum LogTypes {
-	LOGS = 'logs',
-	ERROR = 'error',
-	CUSTOMOBJ = 'customObj',
+	LOGS = "logs",
+	ERROR = "error",
+	CUSTOMOBJ = "customObj",
 }
 
 const init = () => pino();
@@ -23,12 +23,12 @@ const infoLogs = (msg: string | Bindings, logType: LogTypes, generated_by: strin
 	if (
 		generated_by &&
 		[LogTypes.LOGS, LogTypes.ERROR].includes(logType) &&
-		typeof msg === 'string'
+		typeof msg === "string"
 	) {
 		msg = `[${generated_by}] ` + msg;
 	}
-	if (logType === LogTypes.LOGS && typeof msg === 'string') return Logs(msg);
-	if (logType === LogTypes.ERROR && typeof msg === 'string') return ErrorLogs(msg);
+	if (logType === LogTypes.LOGS && typeof msg === "string") return Logs(msg);
+	if (logType === LogTypes.ERROR && typeof msg === "string") return ErrorLogs(msg);
 	return customLogHandler(msg as Bindings);
 };
 

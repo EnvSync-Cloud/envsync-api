@@ -1,104 +1,81 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
 
 export class AppService {
-    public static createApp = async (
-        {
-            name,
-            org_id,
-            description,
-            metadata
-        }: {
-            name: string;
-            org_id: string;
-            description: string;
-            metadata: Record<string, any>;
-        }
-    ) => {
-        const db = await DB.getInstance();
-        
-        const { id } = await db
-            .insertInto('app')
-            .values({
-                id: uuidv4(),
-                name,
-                org_id,
-                description,
-                metadata,
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning('id')
-            .executeTakeFirstOrThrow();
+	public static createApp = async ({
+		name,
+		org_id,
+		description,
+		metadata,
+	}: {
+		name: string;
+		org_id: string;
+		description: string;
+		metadata: Record<string, any>;
+	}) => {
+		const db = await DB.getInstance();
 
-        return {id, name};
-    }
+		const { id } = await db
+			.insertInto("app")
+			.values({
+				id: uuidv4(),
+				name,
+				org_id,
+				description,
+				metadata,
+				created_at: new Date(),
+				updated_at: new Date(),
+			})
+			.returning("id")
+			.executeTakeFirstOrThrow();
 
-    public static getApp = async (
-        {
-            id,
-        }: {
-            id: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
+		return { id, name };
+	};
 
-        const app = await db
-            .selectFrom('app')
-            .selectAll()
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
+	public static getApp = async ({ id }: { id: string }) => {
+		const db = await DB.getInstance();
 
-        return app;
-    }
+		const app = await db
+			.selectFrom("app")
+			.selectAll()
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
 
-    public static updateApp = async (
-        id: string,
-        data: {
-            name?: string;
-            description?: string;
-            metadata?: Record<string, any>;
-        }
-    ) => {
-        const db = await DB.getInstance();
+		return app;
+	};
 
-        await db
-            .updateTable('app')
-            .set({
-                ...data,
-                updated_at: new Date(),
-            })
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
-    }
+	public static updateApp = async (
+		id: string,
+		data: {
+			name?: string;
+			description?: string;
+			metadata?: Record<string, any>;
+		},
+	) => {
+		const db = await DB.getInstance();
 
-    public static deleteApp = async (
-        {
-            id,
-        }: {
-            id: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
+		await db
+			.updateTable("app")
+			.set({
+				...data,
+				updated_at: new Date(),
+			})
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
+	};
 
-        await db
-            .deleteFrom('app')
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
-    }
+	public static deleteApp = async ({ id }: { id: string }) => {
+		const db = await DB.getInstance();
 
-    public static getAllApps = async (
-        org_id: string
-    ) => {
-        const db = await DB.getInstance();
+		await db.deleteFrom("app").where("id", "=", id).executeTakeFirstOrThrow();
+	};
 
-        const apps = await db
-            .selectFrom('app')
-            .selectAll()
-            .where('org_id', '=', org_id)
-            .execute();
+	public static getAllApps = async (org_id: string) => {
+		const db = await DB.getInstance();
 
-        return apps;
-    }
+		const apps = await db.selectFrom("app").selectAll().where("org_id", "=", org_id).execute();
+
+		return apps;
+	};
 }

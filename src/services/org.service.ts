@@ -1,76 +1,70 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
 
 export class OrgService {
-    public static createOrg = async (
-        data: {
-            name: string;
-            slug: string;
-            logo_url?: string;
-            size?: string;
-            website?: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
-        
-        const { id } = await db
-            .insertInto('orgs')
-            .values({
-                id: uuidv4(),
-                ...data,
-                metadata: {},
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning('id')
-            .executeTakeFirstOrThrow();
+	public static createOrg = async (data: {
+		name: string;
+		slug: string;
+		logo_url?: string;
+		size?: string;
+		website?: string;
+	}) => {
+		const db = await DB.getInstance();
 
-        return id;
-    }
+		const { id } = await db
+			.insertInto("orgs")
+			.values({
+				id: uuidv4(),
+				...data,
+				metadata: {},
+				created_at: new Date(),
+				updated_at: new Date(),
+			})
+			.returning("id")
+			.executeTakeFirstOrThrow();
 
-    public static getOrg = async (id: string) => {
-        const db = await DB.getInstance();
+		return id;
+	};
 
-        const org = await db
-            .selectFrom('orgs')
-            .selectAll()
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
+	public static getOrg = async (id: string) => {
+		const db = await DB.getInstance();
 
-        return org;
-    }
+		const org = await db
+			.selectFrom("orgs")
+			.selectAll()
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
 
-    public static updateOrg = async (
-        id: string,
-        data: {
-            logo_url?: string;
-            website?: string;
-            name?: string;
-            slug?: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
+		return org;
+	};
 
-        await db
-            .updateTable('orgs')
-            .set({
-                ...data,
-                updated_at: new Date(),
-            })
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
-    }
+	public static updateOrg = async (
+		id: string,
+		data: {
+			logo_url?: string;
+			website?: string;
+			name?: string;
+			slug?: string;
+		},
+	) => {
+		const db = await DB.getInstance();
 
-    public static checkIfSlugExists = async (slug: string) => {
-        const db = await DB.getInstance();
+		await db
+			.updateTable("orgs")
+			.set({
+				...data,
+				updated_at: new Date(),
+			})
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
+	};
 
-        const org = await db
-            .selectFrom('orgs')
-            .selectAll()
-            .where('slug', '=', slug)
-            .executeTakeFirst();
+	public static checkIfSlugExists = async (slug: string) => {
+		const db = await DB.getInstance();
 
-        return !!org;
-    }
+		const org = await db.selectFrom("orgs").selectAll().where("slug", "=", slug).executeTakeFirst();
+
+		return !!org;
+	};
 }

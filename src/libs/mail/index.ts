@@ -1,12 +1,12 @@
-import fs from 'node:fs/promises';
+import fs from "node:fs/promises";
 
-import infoLogs, { LogTypes } from '@/libs/logger';
+import infoLogs, { LogTypes } from "@/libs/logger";
 
-import { sendMail } from './config';
-import { renderMailContent } from './templates/base';
-import { config } from '@/utils/env';
+import { sendMail } from "./config";
+import { renderMailContent } from "./templates/base";
+import { config } from "@/utils/env";
 
-const __dirname = new URL('.', import.meta.url).pathname;
+const __dirname = new URL(".", import.meta.url).pathname;
 
 const FROM_EMAIL = config.SES_FROM_EMAIL;
 
@@ -16,7 +16,10 @@ export const onOrgOnboardingInvite = async (
 		accept_link: string;
 	},
 ) => {
-	const contentTemplate = await fs.readFile(`${__dirname}/templates/html/org-onboarding-invite.html`, 'utf8');
+	const contentTemplate = await fs.readFile(
+		`${__dirname}/templates/html/org-onboarding-invite.html`,
+		"utf8",
+	);
 	const html = await renderMailContent(contentTemplate, body);
 	const subject = "EnvSync Org Onboarding Invite";
 	const mail = {
@@ -28,9 +31,9 @@ export const onOrgOnboardingInvite = async (
 	};
 	sendMail(mail)
 		.then(() => {
-			infoLogs(`Email sent to ${email}`, LogTypes.LOGS, 'MAIL:INVITE');
+			infoLogs(`Email sent to ${email}`, LogTypes.LOGS, "MAIL:INVITE");
 		})
 		.catch(() => {
-			infoLogs(`Error sending email to ${email}`, LogTypes.ERROR, 'MAIL:INVITE');
+			infoLogs(`Error sending email to ${email}`, LogTypes.ERROR, "MAIL:INVITE");
 		});
 };

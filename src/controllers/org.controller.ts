@@ -2,72 +2,69 @@ import { OrgService } from "@/services/org.service";
 import type { Context } from "hono";
 
 export class OrgController {
-    public static readonly getOrg = async (c: Context) => {
-        try {
-            const org_id = c.get("org_id");
-            
-            const org = await OrgService.getOrg(org_id);
-            return c.json(org);
-        }
-        catch (err) {
-            console.error(err);
-            if (err instanceof Error) {
-                return c.json({ error: err.message }, 500);
-            }
-        }
-    }
+	public static readonly getOrg = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
 
-    public static readonly checkIfSlugExists = async (c: Context) => {
-        try {
-            const { slug } = c.req.query();
+			const org = await OrgService.getOrg(org_id);
+			return c.json(org);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
 
-            if (!slug) {
-                return c.json({ error: 'Slug is required.' }, 400);
-            }
+	public static readonly checkIfSlugExists = async (c: Context) => {
+		try {
+			const { slug } = c.req.query();
 
-            const exists = await OrgService.checkIfSlugExists(slug);
-            return c.json({ exists });
-        }
-        catch (err) {
-            console.error(err);
-            if (err instanceof Error) {
-                return c.json({ error: err.message }, 500);
-            }
-        }
-    }
+			if (!slug) {
+				return c.json({ error: "Slug is required." }, 400);
+			}
 
-    public static readonly updateOrg = async (c: Context) => {
-        try {
-            const org_id = c.get("org_id");
+			const exists = await OrgService.checkIfSlugExists(slug);
+			return c.json({ exists });
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
 
-            const { logo_url, website, name, slug } = await c.req.json();
+	public static readonly updateOrg = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
 
-            const org = await OrgService.getOrg(org_id);
+			const { logo_url, website, name, slug } = await c.req.json();
 
-            const updatedData = {
-                logo_url: logo_url ?? org.logo_url,
-                website: website ?? org.website,
-                name: name ?? org.name,
-                slug: slug ?? org.slug,
-            }
+			const org = await OrgService.getOrg(org_id);
 
-            // check if the slug already exists
-            if (slug) {
-                const exists = await OrgService.checkIfSlugExists(slug);
-                if (exists) {
-                    return c.json({ error: 'Slug already exists.' }, 400);
-                }
-            }
+			const updatedData = {
+				logo_url: logo_url ?? org.logo_url,
+				website: website ?? org.website,
+				name: name ?? org.name,
+				slug: slug ?? org.slug,
+			};
 
-            await OrgService.updateOrg(org_id, updatedData);
+			// check if the slug already exists
+			if (slug) {
+				const exists = await OrgService.checkIfSlugExists(slug);
+				if (exists) {
+					return c.json({ error: "Slug already exists." }, 400);
+				}
+			}
 
-            return c.json({ message: 'Organization updated successfully.' });
-        }
-        catch (err) {
-            console.error(err);
-            if (err instanceof Error) {
-                return c.json({ error: err.message }, 500);
-            }
-        }
-    }
+			await OrgService.updateOrg(org_id, updatedData);
+
+			return c.json({ message: "Organization updated successfully." });
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
 }

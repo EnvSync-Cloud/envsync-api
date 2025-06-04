@@ -1,11 +1,11 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const env = z.object({
-	NODE_ENV: z.enum(['development', 'production']).default('development'),
+	NODE_ENV: z.enum(["development", "production"]).default("development"),
 	PORT: z.string(),
-	DB_LOGGING: z.string().default('false'),
-	DB_AUTO_MIGRATE: z.string().default('false'),
-	DATABASE_SSL: z.string().default('false'),
+	DB_LOGGING: z.string().default("false"),
+	DB_AUTO_MIGRATE: z.string().default("false"),
+	DATABASE_SSL: z.string().default("false"),
 	// Database configuration
 	DATABASE_HOST: z.string(),
 	DATABASE_PORT: z.string(),

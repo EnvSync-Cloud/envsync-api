@@ -1,6 +1,6 @@
-import { SendEmailCommand, SESv2Client } from '@aws-sdk/client-sesv2';
+import { SendEmailCommand, SESv2Client } from "@aws-sdk/client-sesv2";
 
-import { config } from '@/utils/env';
+import { config } from "@/utils/env";
 
 const client = new SESv2Client({
 	region: config.SES_REGION,
@@ -26,9 +26,7 @@ export const sendMail = ({
 	const input = {
 		FromEmailAddress: from,
 		Destination: {
-			ToAddresses: [
-				to,
-			],
+			ToAddresses: [to],
 		},
 		ReplyToAddresses: [from],
 		Content: {

@@ -7,6 +7,6 @@ const app = new Hono();
 
 app.use(authMiddleware());
 
-app.get("/me", AuthController.whoami)
+app.get("/me", AuthController.whoami);
 
 export default app;

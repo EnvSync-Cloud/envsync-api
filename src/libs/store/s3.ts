@@ -1,8 +1,8 @@
-import { ObjectCannedACL, S3Client, type S3ClientConfig } from '@aws-sdk/client-s3';
-import { Upload } from '@aws-sdk/lib-storage';
+import { ObjectCannedACL, S3Client, type S3ClientConfig } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
-import infoLogs, { LogTypes } from '@/libs/logger';
-import { config } from '@/utils/env';
+import infoLogs, { LogTypes } from "@/libs/logger";
+import { config } from "@/utils/env";
 
 /**
  * Uploader class
@@ -39,7 +39,7 @@ export class Uploader {
 	 * @param acl `public-read` or `private` access
 	 */
 	async uploadFile(folderName: string, file: File, acl: ObjectCannedACL) {
-		const s3Key = folderName + '/' + file.name;
+		const s3Key = folderName + "/" + file.name;
 		const parallelUploads3 = new Upload({
 			client: Uploader._s3Client,
 			params: {
@@ -52,8 +52,8 @@ export class Uploader {
 
 		await parallelUploads3.done();
 
-		infoLogs('File uploaded successfully to S3', LogTypes.LOGS, 'S3:Upload');
+		infoLogs("File uploaded successfully to S3", LogTypes.LOGS, "S3:Upload");
 
-		return `${config.S3_BUCKET_URL}/${s3Key}`
+		return `${config.S3_BUCKET_URL}/${s3Key}`;
 	}
 }

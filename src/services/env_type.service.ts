@@ -1,106 +1,96 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
 
 export class EnvTypeService {
-    public static createEnvType = async (
-        {
-            name,
-            org_id
-        }: {
-            name: string;
-            org_id: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
-        
-        const { id } = await db
-            .insertInto('env_type')
-            .values({
-                id: uuidv4(),
-                name,
-                org_id,
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning('id')
-            .executeTakeFirstOrThrow();
+	public static createEnvType = async ({ name, org_id }: { name: string; org_id: string }) => {
+		const db = await DB.getInstance();
 
-        return {id, name};
-    }
+		const { id } = await db
+			.insertInto("env_type")
+			.values({
+				id: uuidv4(),
+				name,
+				org_id,
+				created_at: new Date(),
+				updated_at: new Date(),
+			})
+			.returning("id")
+			.executeTakeFirstOrThrow();
 
-    public static createDefaultEnvTypes = async (
-        org_id: string
-    ) => {
-        const db = await DB.getInstance();
+		return { id, name };
+	};
 
-        const rawEnvTypes = [
-            { name: 'Production', org_id },
-            { name: 'Staging', org_id },
-            { name: 'Development', org_id },
-        ];
+	public static createDefaultEnvTypes = async (org_id: string) => {
+		const db = await DB.getInstance();
 
-        const env_typeInserts = rawEnvTypes.map(env_type => ({
-            id: uuidv4(),
-            ...env_type,
-            created_at: new Date(),
-            updated_at: new Date(),
-        }));
+		const rawEnvTypes = [
+			{ name: "Production", org_id },
+			{ name: "Staging", org_id },
+			{ name: "Development", org_id },
+		];
 
-        const env_types = await db
-            .insertInto('env_type')
-            .values(env_typeInserts)
-            .returningAll()
-            .execute();
+		const env_typeInserts = rawEnvTypes.map(env_type => ({
+			id: uuidv4(),
+			...env_type,
+			created_at: new Date(),
+			updated_at: new Date(),
+		}));
 
-        return env_types;
-    }
+		const env_types = await db
+			.insertInto("env_type")
+			.values(env_typeInserts)
+			.returningAll()
+			.execute();
 
-    public static getEnvTypes = async (org_id: string) => {
-        const db = await DB.getInstance();
+		return env_types;
+	};
 
-        const env_types = await db
-            .selectFrom('env_type')
-            .selectAll()
-            .where('org_id', '=', org_id)
-            .execute();
+	public static getEnvTypes = async (org_id: string) => {
+		const db = await DB.getInstance();
 
-        return env_types;
-    }
+		const env_types = await db
+			.selectFrom("env_type")
+			.selectAll()
+			.where("org_id", "=", org_id)
+			.execute();
 
-    public static getEnvType = async (id: string) => {
-        const db = await DB.getInstance();
+		return env_types;
+	};
 
-        const env_type = await db
-            .selectFrom('env_type')
-            .selectAll()
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
+	public static getEnvType = async (id: string) => {
+		const db = await DB.getInstance();
 
-        return env_type;
-    }
+		const env_type = await db
+			.selectFrom("env_type")
+			.selectAll()
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
 
-    public static updateEnvType = async (id: string, data: {
-        name?: string;
-    }) => {
-        const db = await DB.getInstance();
+		return env_type;
+	};
 
-        await db
-            .updateTable('env_type')
-            .set({
-                ...data,
-                updated_at: new Date(),
-            })
-            .where('id', '=', id)
-            .execute();
-    }
+	public static updateEnvType = async (
+		id: string,
+		data: {
+			name?: string;
+		},
+	) => {
+		const db = await DB.getInstance();
 
-    public static deleteEnvType = async (id: string) => {
-        const db = await DB.getInstance();
+		await db
+			.updateTable("env_type")
+			.set({
+				...data,
+				updated_at: new Date(),
+			})
+			.where("id", "=", id)
+			.execute();
+	};
 
-        await db
-            .deleteFrom('env_type')
-            .where('id', '=', id)
-            .execute();
-    }
+	public static deleteEnvType = async (id: string) => {
+		const db = await DB.getInstance();
+
+		await db.deleteFrom("env_type").where("id", "=", id).execute();
+	};
 }

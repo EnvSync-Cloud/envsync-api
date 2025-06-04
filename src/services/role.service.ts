@@ -1,83 +1,73 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
 
 export class RoleService {
-    public static createRole = async (
-        {
-            name,
-            org_id
-        }: {
-            name: string;
-            org_id: string;
-        }
-    ) => {
-        const db = await DB.getInstance();
-        
-        const { id } = await db
-            .insertInto('org_role')
-            .values({
-                id: uuidv4(),
-                name,
-                org_id,
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning('id')
-            .executeTakeFirstOrThrow();
+	public static createRole = async ({ name, org_id }: { name: string; org_id: string }) => {
+		const db = await DB.getInstance();
 
-        return {id, name};
-    }
+		const { id } = await db
+			.insertInto("org_role")
+			.values({
+				id: uuidv4(),
+				name,
+				org_id,
+				created_at: new Date(),
+				updated_at: new Date(),
+			})
+			.returning("id")
+			.executeTakeFirstOrThrow();
 
-    public static createDefaultRoles = async (
-        org_id: string
-    ) => {
-        const db = await DB.getInstance();
+		return { id, name };
+	};
 
-        const rawRoles = [
-            { name: 'Admin', org_id },
-            { name: 'Developer', org_id },
-            { name: 'Viewer', org_id },
-        ];
+	public static createDefaultRoles = async (org_id: string) => {
+		const db = await DB.getInstance();
 
-        const roleInserts = rawRoles.map(role => ({
-            id: uuidv4(),
-            ...role,
-            created_at: new Date(),
-            updated_at: new Date(),
-        }));
+		const rawRoles = [
+			{ name: "Admin", org_id },
+			{ name: "Developer", org_id },
+			{ name: "Viewer", org_id },
+		];
 
-        const roles = await db
-            .insertInto('org_role')
-            .values(roleInserts)
-            .returning('name')
-            .returning('id')
-            .execute();
+		const roleInserts = rawRoles.map(role => ({
+			id: uuidv4(),
+			...role,
+			created_at: new Date(),
+			updated_at: new Date(),
+		}));
 
-        return roles;
-    }
+		const roles = await db
+			.insertInto("org_role")
+			.values(roleInserts)
+			.returning("name")
+			.returning("id")
+			.execute();
 
-    public static getRole = async (id: string) => {
-        const db = await DB.getInstance();
+		return roles;
+	};
 
-        const role = await db
-            .selectFrom('org_role')
-            .selectAll()
-            .where('id', '=', id)
-            .executeTakeFirstOrThrow();
+	public static getRole = async (id: string) => {
+		const db = await DB.getInstance();
 
-        return role;
-    }
+		const role = await db
+			.selectFrom("org_role")
+			.selectAll()
+			.where("id", "=", id)
+			.executeTakeFirstOrThrow();
 
-    public static getRoles = async (org_id: string) => {
-        const db = await DB.getInstance();
+		return role;
+	};
 
-        const role = await db
-            .selectFrom('users')
-            .selectAll()
-            .where('org_id', '=', org_id)
-            .executeTakeFirstOrThrow();
+	public static getRoles = async (org_id: string) => {
+		const db = await DB.getInstance();
 
-        return role;
-    }
+		const role = await db
+			.selectFrom("users")
+			.selectAll()
+			.where("org_id", "=", org_id)
+			.executeTakeFirstOrThrow();
+
+		return role;
+	};
 }

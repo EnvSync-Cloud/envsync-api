@@ -6,7 +6,7 @@ const app = new Hono();
 
 app.use(authMiddleware());
 
-app.get("/",)
-app.get("/:id",)
+app.get("/");
+app.get("/:id");
 
 export default app;
