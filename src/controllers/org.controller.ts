@@ -1,5 +1,7 @@
-import { OrgService } from "@/services/org.service";
 import type { Context } from "hono";
+
+import { OrgService } from "@/services/org.service";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class OrgController {
 	public static readonly getOrg = async (c: Context) => {
@@ -58,6 +60,16 @@ export class OrgController {
 			}
 
 			await OrgService.updateOrg(org_id, updatedData);
+
+            // Log the organization update
+            await AuditLogService.notifyAuditSystem({
+                action: "org_updated",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    logo_url, website, name, slug
+                }
+            });
 
 			return c.json({ message: "Organization updated successfully." });
 		} catch (err) {

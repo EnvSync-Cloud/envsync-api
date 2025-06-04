@@ -1,6 +1,7 @@
 import { type Context } from "hono";
 
 import { EnvService } from "@/services/env.service";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class EnvController {
 	public static readonly createEnv = async (c: Context) => {
@@ -19,6 +20,20 @@ export class EnvController {
 				app_id,
 				env_type_id,
 			});
+
+            // Log the creation of the environment variable
+            await AuditLogService.notifyAuditSystem({
+                action: "env_created",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_id: env.id,
+                    key,
+                    value,
+                    app_id,
+                    env_type_id,
+                }
+            })
 
 			return c.json(env, 201);
 		} catch (err) {
@@ -47,6 +62,19 @@ export class EnvController {
 				env_type_id,
 			});
 
+            // Log the update of the environment variable
+            await AuditLogService.notifyAuditSystem({
+                action: "env_updated",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    key,
+                    value,
+                    app_id,
+                    env_type_id,
+                }
+            })
+
 			return c.json({ message: "Env updated successfully" });
 		} catch (err) {
 			console.error(err);
@@ -71,6 +99,18 @@ export class EnvController {
 				key,
 				org_id,
 			});
+
+            // Log the deletion of the environment variable
+            await AuditLogService.notifyAuditSystem({
+                action: "env_deleted",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id,
+                    env_type_id,
+                    key,
+                }
+            })
 
 			return c.json({ message: "Env deleted successfully" });
 		} catch (err) {
@@ -98,6 +138,18 @@ export class EnvController {
 				org_id,
 			});
 
+            // Log the retrieval of the environment variable
+            await AuditLogService.notifyAuditSystem({
+                action: "env_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id,
+                    env_type_id,
+                    key,
+                }
+            })
+
 			return c.json(env);
 		} catch (err) {
 			console.error(err);
@@ -122,6 +174,17 @@ export class EnvController {
 				org_id,
 			});
 
+            // Log the retrieval of the environment variables
+            await AuditLogService.notifyAuditSystem({
+                action: "envs_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id,
+                    env_type_id,
+                }
+            })
+
 			return c.json(envs);
 		} catch (err) {
 			console.error(err);
@@ -141,6 +204,18 @@ export class EnvController {
 			}
 
 			await EnvService.batchCreateEnvs(org_id, app_id, env_type_id, envs);
+
+            // Log the batch creation of environment variables
+            await AuditLogService.notifyAuditSystem({
+                action: "envs_batch_created",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id,
+                    env_type_id,
+                    env_count: envs.length,
+                }
+            })
 
 			return c.json({ message: "Envs created successfully" }, 201);
 		} catch (err) {

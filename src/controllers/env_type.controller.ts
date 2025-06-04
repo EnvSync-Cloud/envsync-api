@@ -1,12 +1,24 @@
 import { type Context } from "hono";
 
 import { EnvTypeService } from "@/services/env_type.service";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class EnvTypeController {
 	public static readonly getEnvTypes = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
 			const env_types = await EnvTypeService.getEnvTypes(org_id);
+
+            // Log the retrieval of environment types
+            await AuditLogService.notifyAuditSystem({
+                action: "env_types_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_type_count: env_types.length,
+                }
+            })
+
 			return c.json(env_types);
 		} catch (err) {
 			console.error(err);
@@ -26,7 +38,19 @@ export class EnvTypeController {
 			}
 
 			const env_type = await EnvTypeService.createEnvType({ org_id, name });
-			return c.json(env_type, 201);
+			
+            // Log the creation of the environment type
+            await AuditLogService.notifyAuditSystem({
+                action: "env_type_created",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_type_id: env_type.id,
+                    name: env_type.name,
+                }
+            })
+
+            return c.json(env_type, 201);
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
@@ -55,6 +79,18 @@ export class EnvTypeController {
 			}
 
 			await EnvTypeService.updateEnvType(id, { name });
+
+            // Log the update of the environment type
+            await AuditLogService.notifyAuditSystem({
+                action: "env_type_updated",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_type_id: id,
+                    name,
+                }
+            })
+
 			return c.json({ message: "Env type updated successfully." });
 		} catch (err) {
 			console.error(err);
@@ -83,6 +119,17 @@ export class EnvTypeController {
 			}
 
 			await EnvTypeService.deleteEnvType(id);
+
+            // Log the deletion of the environment type
+            await AuditLogService.notifyAuditSystem({
+                action: "env_type_deleted",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_type_id: id,
+                }
+            })
+
 			return c.json({ message: "Env type deleted successfully." });
 		} catch (err) {
 			console.error(err);
@@ -109,6 +156,17 @@ export class EnvTypeController {
 			if (envType.org_id !== org_id) {
 				return c.json({ error: "You do not have permission to get this env type." }, 403);
 			}
+
+            // Log the retrieval of the environment type
+            await AuditLogService.notifyAuditSystem({
+                action: "env_type_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    env_type_id: id,
+                    name: envType.name,
+                }
+            })
 
 			return c.json(envType);
 		} catch (err) {

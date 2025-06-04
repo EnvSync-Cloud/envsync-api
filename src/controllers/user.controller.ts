@@ -1,13 +1,26 @@
+import type { Context } from "hono";
+
 import { auth0, auth0Management } from "@/helpers/auth0";
 import { UserService } from "@/services/user.service";
+import { AuditLogService } from "@/services/audit_log.service";
 import { config } from "@/utils/env";
-import type { Context } from "hono";
 
 export class UserController {
 	public static readonly getUsers = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
 			const users = await UserService.getAllUser(org_id);
+
+            // Log the user retrieval
+            await AuditLogService.notifyAuditSystem({
+                action: "users_retrieved",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    count: users.length,
+                }
+            });
+
 			return c.json(users);
 		} catch (err) {
 			console.error(err);
@@ -35,6 +48,16 @@ export class UserController {
 			if (user.org_id !== org_id) {
 				return c.json({ error: "You do not have permission to access this user." }, 403);
 			}
+
+            // Log the user retrieval
+            await AuditLogService.notifyAuditSystem({
+                action: "user_retrieved",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    user_id: id,
+                }
+            });
 
 			return c.json(user);
 		} catch (err) {
@@ -87,6 +110,19 @@ export class UserController {
 			// Update user
 			await UserService.updateUser(id, updateData);
 
+            // Log the user update
+            await AuditLogService.notifyAuditSystem({
+                action: "user_updated",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    user_id: id,
+                    fields: {
+                        full_name, profile_picture_url, email
+                    },
+                }
+            });
+
 			return c.json({ message: "User updated successfully." });
 		} catch (err) {
 			console.error(err);
@@ -124,6 +160,16 @@ export class UserController {
 			await auth0Management.users.delete({
 				id: user.auth0_id ?? "",
 			});
+
+            // Log the user deletion
+            await AuditLogService.notifyAuditSystem({
+                action: "user_deleted",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    user_id: id,
+                }
+            });
 
 			return c.json({ message: "User deleted successfully." });
 		} catch (err) {
@@ -164,6 +210,17 @@ export class UserController {
 			await UserService.updateUser(id, {
 				role_id,
 			});
+
+            // Log the user role update
+            await AuditLogService.notifyAuditSystem({
+                action: "user_role_updated",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    user_id: id,
+                    role_id: role_id,
+                }
+            });
 
 			return c.json({ message: "User role updated successfully." });
 		} catch (err) {
@@ -206,6 +263,16 @@ export class UserController {
 				email: user.email,
 				client_id: config.AUTH0_CLIENT_ID,
 			});
+
+            // Log the password update request
+            await AuditLogService.notifyAuditSystem({
+                action: "password_update_requested",
+                org_id: org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    user_id: id,
+                }
+            });
 
 			return c.json({ message: "Password updation request sent!" });
 		} catch (err) {

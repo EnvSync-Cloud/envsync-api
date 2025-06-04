@@ -1,6 +1,7 @@
 import { type Context } from "hono";
 
 import { AppService } from "@/services/app.service";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class AppController {
 	public static readonly createApp = async (c: Context) => {
@@ -18,6 +19,17 @@ export class AppController {
 				description,
 				metadata,
 			});
+
+            // Log the creation of the app
+            await AuditLogService.notifyAuditSystem({
+                action: "app_created",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id: app.id,
+                    name: app.name,
+                }
+            })
 
 			return c.json(app, 201);
 		} catch (err) {
@@ -40,6 +52,16 @@ export class AppController {
 				return c.json({ error: "App does not belong to your organization" }, 403);
 			}
 
+            await AuditLogService.notifyAuditSystem({
+                action: "app_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id: app.id,
+                    name: app.name,
+                }
+            })
+
 			return c.json(app);
 		} catch (err) {
 			console.error(err);
@@ -54,6 +76,15 @@ export class AppController {
 			const org_id = c.get("org_id");
 
 			const apps = await AppService.getAllApps(org_id);
+
+            await AuditLogService.notifyAuditSystem({
+                action: "apps_viewed",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_count: apps.length,
+                }
+            })
 
 			return c.json(apps);
 		} catch (err) {
@@ -84,6 +115,17 @@ export class AppController {
 				metadata,
 			});
 
+            // Log the update of the app
+            await AuditLogService.notifyAuditSystem({
+                action: "app_updated",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id: app.id,
+                    name: app.name,
+                }
+            })
+
 			return c.json({ message: "App updated successfully" });
 		} catch (err) {
 			console.error(err);
@@ -106,6 +148,17 @@ export class AppController {
 			}
 
 			await AppService.deleteApp({ id });
+
+            // Log the deletion of the app
+            await AuditLogService.notifyAuditSystem({
+                action: "app_deleted",
+                org_id,
+                user_id: c.get("user_id"),
+                details: {
+                    app_id: app.id,
+                    name: app.name,
+                }
+            })
 
 			return c.json({ message: "App deleted successfully" });
 		} catch (err) {

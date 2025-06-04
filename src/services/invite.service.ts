@@ -24,7 +24,7 @@ export class InviteService {
 
 	public static createUserInvite = async (email: string, org_id: string, role_id: string) => {
 		const db = await DB.getInstance();
-		const { invite_token } = await db
+		const { id, invite_token } = await db
 			.insertInto("invite_user")
 			.values({
 				id: uuidv4(),
@@ -39,7 +39,7 @@ export class InviteService {
 			.returningAll()
 			.executeTakeFirstOrThrow();
 
-		return invite_token;
+		return { invite_token, id };
 	};
 
 	public static getOrgInviteByCode = async (invite_code: string) => {
@@ -119,4 +119,15 @@ export class InviteService {
 			.where("id", "=", invite_id)
 			.executeTakeFirstOrThrow();
 	};
+
+    public static getUserInviteById = async (invite_id: string) => {
+        const db = await DB.getInstance();
+        const invite = await db
+            .selectFrom("invite_user")
+            .selectAll()
+            .where("id", "=", invite_id)
+            .executeTakeFirstOrThrow();
+
+        return invite;
+    }
 }
