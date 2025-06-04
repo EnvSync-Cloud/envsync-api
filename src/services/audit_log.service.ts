@@ -30,7 +30,7 @@ export class AuditLogService {
 			.execute();
 	};
 
-    public static getAuditLogs = async (org_id: string) => {
+    public static getAuditLogs = async (org_id: string, { page, per_page }: { page: number; per_page: number }) => {
         const db = await DB.getInstance();
 
         const auditLogs = await db
@@ -38,6 +38,8 @@ export class AuditLogService {
             .selectAll()
             .where("org_id", "=", org_id)
             .orderBy("created_at", "desc")
+            .limit(per_page)
+            .offset((page - 1) * per_page)
             .execute();
 
         return auditLogs;

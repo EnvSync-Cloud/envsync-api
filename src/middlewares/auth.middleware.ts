@@ -3,7 +3,6 @@ import { decode, verify } from "hono/jwt";
 import { getCookie } from "hono/cookie";
 import { auth0 } from "@/helpers/auth0";
 
-import { config } from "@/utils/env";
 import { UserService } from "@/services/user.service";
 import { RoleService } from "@/services/role.service";
 
