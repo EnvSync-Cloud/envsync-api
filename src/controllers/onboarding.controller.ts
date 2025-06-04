@@ -101,7 +101,9 @@ export class OnboardingController {
                 return c.json({ error: 'Invite code is required.' }, 400);
             }
 
-            return c.json({ message: 'Organization invite retrieved successfully.' }, 200);
+            const invite = await InviteService.getOrgInviteByCode(invite_code);
+
+            return c.json({ invite }, 200);
         }
         catch (err) {
             console.error(err);
@@ -113,13 +115,27 @@ export class OnboardingController {
 
     public static readonly createUserInvite = async (c: Context) => {
         try {
+            const org_id = c.get("org_id");
+            const role = c.get("role_name");
+
             const { email, role_id } = await c.req.json();
 
             if (!email || !role_id) {
                 return c.json({ error: 'Email and role ID are required.' }, 400);
             }
 
-            return c.json({ message: 'User invite created successfully.' }, 201);
+            // only Admin can create user invites
+            if (role !== "Admin") {
+                return c.json({ error: 'Only Admin can create user invites.' }, 403);
+            }
+
+            const invite = await InviteService.createUserInvite(
+                email,
+                org_id,
+                role_id,
+            );
+
+            return c.json({ message: 'User invite created successfully.', invite }, 201);
         }
         catch (err) {
             console.error(err);
@@ -137,13 +153,30 @@ export class OnboardingController {
 
             const {
                 full_name,
+                password,
             } = await c.req.json();
 
-            if (!invite_code || !full_name) {
+            if (!invite_code || !full_name || !password) {
                 return c.json({ error: 'All fields are required.' }, 400);
             }
 
-            return c.json({ message: 'User invite accepted successfully.' }, 200);
+            const invite = await InviteService.getUserInviteByCode(invite_code);
+
+            // create user
+            await UserService.createUser({
+                email: invite.email,
+                full_name,
+                password,
+                org_id: invite.org_id,
+                role_id: invite.role_id,
+            });
+
+            // update invite
+            await InviteService.updateUserInvite(invite.id, {
+                is_accepted: true,
+            });
+
+            return c.json({ message: 'User invite accepted successfully.', }, 200);
         }
         catch (err) {
             console.error(err);
@@ -163,7 +196,66 @@ export class OnboardingController {
                 return c.json({ error: 'Invite code is required.' }, 400);
             }
 
-            return c.json({ message: 'User invite retrieved successfully.' }, 200);
+            const invite = await InviteService.getUserInviteByCode(invite_code);
+
+            return c.json({ invite }, 200);
+        }
+        catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    }
+    
+    // update user invite
+    public static readonly updateUserInvite = async (c: Context) => {
+        try {
+            const {
+                invite_code,
+            } = c.req.param();
+
+            const {
+                role_id,
+            } = await c.req.json();
+
+            if (!invite_code || !role_id) {
+                return c.json({ error: 'All fields are required.' }, 400);
+            }
+
+            const invite = await InviteService.getUserInviteByCode(invite_code);
+
+            if (!invite) {
+                return c.json({ error: 'Invite not found.' }, 404);
+            }
+
+            await InviteService.updateUserInvite(invite.id, {
+                role_id,
+            });
+
+            return c.json({ message: 'User invite updated successfully.' }, 200);
+        }
+        catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    }
+
+    public static readonly deleteUserInvite = async (c: Context) => {
+        try {
+            const {
+                invite_id,
+            } = c.req.param();
+
+            if (!invite_id) {
+                return c.json({ error: 'Invite id is required.' }, 400);
+            }
+
+            await InviteService.deleteUserInvite(invite_id);
+
+            return c.json({ message: 'User invite deleted successfully.' }, 200);
         }
         catch (err) {
             console.error(err);

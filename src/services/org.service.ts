@@ -1,7 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { SecretKeyGenerator } from "sk-keygen";
 
-import { auth0Management } from '@/helpers/auth0';
 import { DB } from "@/libs/db";
 
 export class OrgService {
@@ -41,5 +39,38 @@ export class OrgService {
             .executeTakeFirstOrThrow();
 
         return org;
+    }
+
+    public static updateOrg = async (
+        id: string,
+        data: {
+            logo_url?: string;
+            website?: string;
+            name?: string;
+            slug?: string;
+        }
+    ) => {
+        const db = await DB.getInstance();
+
+        await db
+            .updateTable('orgs')
+            .set({
+                ...data,
+                updated_at: new Date(),
+            })
+            .where('id', '=', id)
+            .executeTakeFirstOrThrow();
+    }
+
+    public static checkIfSlugExists = async (slug: string) => {
+        const db = await DB.getInstance();
+
+        const org = await db
+            .selectFrom('orgs')
+            .selectAll()
+            .where('slug', '=', slug)
+            .executeTakeFirst();
+
+        return !!org;
     }
 }

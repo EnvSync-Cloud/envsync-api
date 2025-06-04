@@ -55,4 +55,52 @@ export class EnvTypeService {
 
         return env_types;
     }
+
+    public static getEnvTypes = async (org_id: string) => {
+        const db = await DB.getInstance();
+
+        const env_types = await db
+            .selectFrom('env_type')
+            .selectAll()
+            .where('org_id', '=', org_id)
+            .execute();
+
+        return env_types;
+    }
+
+    public static getEnvType = async (id: string) => {
+        const db = await DB.getInstance();
+
+        const env_type = await db
+            .selectFrom('env_type')
+            .selectAll()
+            .where('id', '=', id)
+            .executeTakeFirstOrThrow();
+
+        return env_type;
+    }
+
+    public static updateEnvType = async (id: string, data: {
+        name?: string;
+    }) => {
+        const db = await DB.getInstance();
+
+        await db
+            .updateTable('env_type')
+            .set({
+                ...data,
+                updated_at: new Date(),
+            })
+            .where('id', '=', id)
+            .execute();
+    }
+
+    public static deleteEnvType = async (id: string) => {
+        const db = await DB.getInstance();
+
+        await db
+            .deleteFrom('env_type')
+            .where('id', '=', id)
+            .execute();
+    }
 }

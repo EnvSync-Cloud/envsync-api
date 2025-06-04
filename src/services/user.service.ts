@@ -41,6 +41,7 @@ export class UserService {
                 role_id: data.role_id,
                 auth0_id: auth0_user.data.user_id,
                 full_name: data.full_name,
+                profile_picture_url: auth0_user.data.picture,
                 created_at: new Date(),
                 updated_at: new Date(),
             })
@@ -78,12 +79,20 @@ export class UserService {
         return user;
     }
 
-    public static updateUser = async (id: string, data: any) => {
+    public static updateUser = async (id: string, data: {
+        full_name?: string;
+        profile_picture_url?: string;
+        role_id?: string;
+        email?: string;
+    }) => {
         const db = await DB.getInstance();
 
         await db
             .updateTable('users')
-            .set(data)
+            .set({
+                ...data,
+                updated_at: new Date(),
+            })
             .where('id', '=', id)
             .execute();
     }
@@ -94,7 +103,7 @@ export class UserService {
         await db
             .deleteFrom('users')
             .where('id', '=', id)
-            .execute();
+            .executeTakeFirstOrThrow();
     }
 
     public static getUserByAuth0Id = async (auth0_id: string) => {

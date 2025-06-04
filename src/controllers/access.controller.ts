@@ -60,8 +60,12 @@ export class AccessController {
             const {
                 AUTH0_CLIENT_ID,
                 AUTH0_DOMAIN,
-                AUTH0_CLI_REDIRECT_URI,
+                AUTH0_WEB_REDIRECT_URI,
             } = config;
+
+            const loginUrl = `https://${AUTH0_DOMAIN}/authorize?client_id=${AUTH0_CLIENT_ID}&response_type=code&scope=openid%20email%20profile&redirect_uri=${encodeURIComponent(AUTH0_WEB_REDIRECT_URI)}`;
+
+            return c.json({ message: 'Web login created successfully.', loginUrl }, 201);
         }
         catch (err) {
             console.error(err);
@@ -75,8 +79,24 @@ export class AccessController {
             const {
                 AUTH0_CLIENT_ID,
                 AUTH0_DOMAIN,
-                AUTH0_CLI_REDIRECT_URI,
+                AUTH0_WEB_REDIRECT_URI,
             } = config;
+
+            const { code } = c.req.query();
+
+            if (!code) {
+                return c.json({ error: 'Code is required.' }, 400);
+            }
+
+            const tokenResponse = await auth0.oauth.authorizationCodeGrant({
+                client_id: AUTH0_CLIENT_ID,
+                code,
+                redirect_uri: AUTH0_WEB_REDIRECT_URI,
+            });
+
+            const tokenData = tokenResponse.data;
+
+            return c.json({ message: 'Web login callback successful.', tokenData }, 200);
         }
         catch (err) {
             console.error(err);

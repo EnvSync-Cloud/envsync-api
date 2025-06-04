@@ -100,12 +100,14 @@ export async function up(db: Kysely<Database>): Promise<void> {
         .addColumn('id', 'text', (col) => col.primaryKey().notNull())
         .addColumn('org_id', 'text', (col) => col.notNull())
         .addColumn('env_type_id', 'text', (col) => col.notNull())
+        .addColumn('app_id', 'text', (col) => col.notNull())
         .addColumn('key', 'text', (col) => col.notNull())
         .addColumn('value', 'text', (col) => col.notNull())
         .addColumn('created_at', 'timestamptz', (col) => col.notNull())
         .addColumn('updated_at', 'timestamptz', (col) => col.notNull())
         .addForeignKeyConstraint('fk_env_store_org_id_orgs_id', ['org_id'], 'orgs', ['id'], (cb) => cb.onDelete('cascade'))
         .addForeignKeyConstraint('fk_env_store_env_type_id_env_type_id', ['env_type_id'], 'env_type', ['id'], (cb) => cb.onDelete('cascade'))
+        .addForeignKeyConstraint('fk_env_store_app_id_app_id', ['app_id'], 'app', ['id'], (cb) => cb.onDelete('cascade'))
         .execute();
 
     await db.schema

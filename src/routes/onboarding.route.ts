@@ -5,17 +5,19 @@ import { OnboardingController } from "@/controllers/onboarding.controller";
 
 const app = new Hono();
 
-app.post("/invite/org", OnboardingController.createOrgInvite)
+app.post("/org", OnboardingController.createOrgInvite)
 
-app.get("/invite/org/:invite_code", OnboardingController.getOrgInviteByCode)
-app.put("/invite/org/:invite_code/accept", OnboardingController.acceptOrgInvite)
+app.get("/org/:invite_code", OnboardingController.getOrgInviteByCode)
+app.put("/org/:invite_code/accept", OnboardingController.acceptOrgInvite)
 
-app.get("/invite/user/:invite_code", OnboardingController.getUserInviteByCode)
-app.put("/invite/user/:invite_code/accept", OnboardingController.acceptUserInvite)
-
+app.get("/user/:invite_code", OnboardingController.getUserInviteByCode)
+app.put("/user/:invite_code/accept", OnboardingController.acceptUserInvite)
 
 app.use(authMiddleware());
 
-app.post("/invite/user", OnboardingController.createUserInvite)
+app.post("/user", OnboardingController.createUserInvite)
+
+app.patch("/user/:invite_code", OnboardingController.updateUserInvite)
+app.delete("/user/:invite_id", OnboardingController.deleteUserInvite)
 
 export default app;

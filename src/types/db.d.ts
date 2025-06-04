@@ -28,6 +28,7 @@ interface OrgRole extends BaseTable {
 interface EnvStore extends BaseTable {
     org_id: ColumnType<string>;
     env_type_id: ColumnType<string>;
+    app_id: ColumnType<string>;
     key: ColumnType<string>;
     value: ColumnType<string>;
 }
