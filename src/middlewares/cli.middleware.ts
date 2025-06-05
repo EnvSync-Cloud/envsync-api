@@ -9,6 +9,7 @@ export const cliMiddleware = (): MiddlewareHandler => {
 
             if (!command){
                 await next();
+                return;
             }
 
             const user_id = ctx.get("user_id");
@@ -23,13 +24,13 @@ export const cliMiddleware = (): MiddlewareHandler => {
                     command,
                 },
             });
+
+            await next();
         } catch (err) {
             console.error(err);
             if (err instanceof Error) {
                 return ctx.json({ error: err.message }, 401);
             }
-        } finally {
-            await next();
         }
     };
 };
