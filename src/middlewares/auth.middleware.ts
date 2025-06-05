@@ -1,10 +1,9 @@
 import type { Context, MiddlewareHandler, Next } from "hono";
-import { decode } from "hono/jwt";
 import { getCookie } from "hono/cookie";
-import { auth0 } from "@/helpers/auth0";
 
 import { UserService } from "@/services/user.service";
 import { RoleService } from "@/services/role.service";
+import { validateAccess } from "@/helpers/access";
 
 export const authMiddleware = (): MiddlewareHandler => {
 	return async (ctx: Context, next: Next) => {
@@ -13,19 +12,27 @@ export const authMiddleware = (): MiddlewareHandler => {
 			ctx.req.query("access_token") ??
 			getCookie(ctx, "access_token");
 
-		if (!token) return ctx.json({ error: "No token provided" }, 401);
+		let apiKey = ctx.req.header("X-API-Key") ??
+			ctx.req.query("api_key");
 
-		token = token.replace("Bearer ", "");
+		// If neither token nor API key is provided, return an error
+		// This is to ensure that at least one form of authentication is provided
+		// If both are provided, the token will be prioritized
+		if (!token && !apiKey) {
+			return ctx.json({ error: "No token provided" }, 401);
+		};
 
 		try {
-			await auth0.oauth.idTokenValidator.validate(token);
-			const decoded = decode(token);
-
-			const user = await UserService.getUserByAuth0Id(decoded.payload.sub as string);
+			const access_info = await validateAccess({
+				token: token ? token.replace("Bearer ", "") : apiKey ?? "",
+				type: token ? "JWT" : "API_KEY"
+			})
+			
+			const user = await UserService.getUserByAuth0Id(access_info.user_id);
 			const role = await RoleService.getRole(user.role_id);
 
 			ctx.set("user_id", user.id);
-			ctx.set("auth0_user_id", decoded.payload.sub);
+			ctx.set("auth0_user_id", access_info.user_id);
 			ctx.set("org_id", user.org_id);
 			ctx.set("role_id", role.id);
 

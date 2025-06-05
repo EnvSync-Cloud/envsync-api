@@ -51,17 +51,29 @@ app.get(
 						scheme: "bearer",
 						bearerFormat: "JWT",
 					},
+					apiKeyAuth: {
+						type: "apiKey",
+						in: "header",
+						name: "X-API-Key",
+					},
 				},
 			},
 			security: [
 				{
 					bearerAuth: [],
 				},
+				{
+					apiKeyAuth: [],
+				},
 			],
 			servers: [
 				{
 					url: "http://localhost:" + config.PORT,
 					description: "Local server",
+				},
+				{
+					url: "https://api.envsync.cloud",
+					description: "Production server",
 				},
 			],
 		},
