@@ -16,6 +16,7 @@ export class AccessController {
 
 			let deviceAuthInit = await openid.initiateDeviceAuthorization(auth0Config, {
 				scope: "openid email profile",
+				audience: "https://api.envsync.cloud/api",
 			});
 
 			return c.json(
