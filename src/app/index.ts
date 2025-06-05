@@ -10,6 +10,7 @@ import { openAPISpecs } from "hono-openapi";
 import log, { LogTypes } from "@/libs/logger";
 import routes from "@/routes";
 import { config } from "@/utils/env";
+import { version } from "package.json";
 
 const app = new Hono();
 
@@ -40,7 +41,7 @@ app.get(
 		documentation: {
 			info: {
 				title: "EnvSync API",
-				version: "0.0.0",
+				version: version,
 				description: "API Documentation",
 			},
 			components: {
@@ -75,6 +76,12 @@ app.get(
 		title: "EnvSync API via Scalar",
 	}),
 );
+
+app.get("/version", ctx => {
+	return ctx.json({
+		version,
+	});
+})
 
 showRoutes(app);
 

@@ -2,6 +2,7 @@
 	"name": "envsync-api",
 	"type": "module",
 	"module": "index.ts",
+	"version": "0.1.1",
 	"scripts": {
 		"build": "bun run builder.ts",
 		"db": "bun run scripts/migrate.ts",
