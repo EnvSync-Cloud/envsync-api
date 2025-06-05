@@ -7,11 +7,11 @@ import { auth0 } from "@/helpers/auth0";
 export class AccessController {
 	public static readonly createCliLogin = async (c: Context) => {
 		try {
-			const { AUTH0_CLIENT_ID, AUTH0_DOMAIN } = config;
+			const { AUTH0_CLI_CLIENT_ID, AUTH0_DOMAIN } = config;
 
 			const auth0Config: openid.Configuration = await openid.discovery(
 				new URL(`https://${AUTH0_DOMAIN}`),
-				AUTH0_CLIENT_ID,
+				AUTH0_CLI_CLIENT_ID,
 			);
 
 			let deviceAuthInit = await openid.initiateDeviceAuthorization(auth0Config, {
@@ -26,7 +26,7 @@ export class AccessController {
 					device_code: deviceAuthInit.device_code,
 					expires_in: deviceAuthInit.expires_in,
 					interval: deviceAuthInit.interval,
-					client_id: AUTH0_CLIENT_ID,
+					client_id: AUTH0_CLI_CLIENT_ID,
 					domain: AUTH0_DOMAIN,
 				},
 				201,

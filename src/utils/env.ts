@@ -31,6 +31,8 @@ export const env = z.object({
 	AUTH0_DOMAIN: z.string(),
 	AUTH0_CLIENT_ID: z.string(),
 	AUTH0_CLIENT_SECRET: z.string(),
+	AUTH0_CLI_CLIENT_ID: z.string(),
+	AUTH0_CLI_CLIENT_SECRET: z.string(),
 	AUTH0_ISSUER_BASE_URL: z.string(),
 	AUTH0_MANAGEMENT_CLIENT_ID: z.string(),
 	AUTH0_MANAGEMENT_CLIENT_SECRET: z.string(),
