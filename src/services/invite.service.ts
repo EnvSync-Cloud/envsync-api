@@ -120,14 +120,14 @@ export class InviteService {
 			.executeTakeFirstOrThrow();
 	};
 
-    public static getUserInviteById = async (invite_id: string) => {
-        const db = await DB.getInstance();
-        const invite = await db
-            .selectFrom("invite_user")
-            .selectAll()
-            .where("id", "=", invite_id)
-            .executeTakeFirstOrThrow();
+	public static getUserInviteById = async (invite_id: string) => {
+		const db = await DB.getInstance();
+		const invite = await db
+			.selectFrom("invite_user")
+			.selectAll()
+			.where("id", "=", invite_id)
+			.executeTakeFirstOrThrow();
 
-        return invite;
-    }
+		return invite;
+	};
 }

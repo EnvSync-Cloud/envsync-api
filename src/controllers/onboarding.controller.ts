@@ -20,9 +20,9 @@ export class OnboardingController {
 
 			const invite_data = await InviteService.createOrgInvite(email);
 
-            await onOrgOnboardingInvite(email, {
-                accept_link: `https://app.envsync.cloud/onboarding/accept-org-invite/${invite_data}`,
-            })
+			await onOrgOnboardingInvite(email, {
+				accept_link: `https://app.envsync.cloud/onboarding/accept-org-invite/${invite_data}`,
+			});
 
 			return c.json({ message: "Organization invite created successfully." }, 201);
 		} catch (err) {
@@ -77,16 +77,16 @@ export class OnboardingController {
 				is_accepted: true,
 			});
 
-            // Log the organization creation
-            await AuditLogService.notifyAuditSystem({
-                action: "org_created",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    org_id,
-                    name,
-                }
-            });
+			// Log the organization creation
+			await AuditLogService.notifyAuditSystem({
+				action: "org_created",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					org_id,
+					name,
+				},
+			});
 
 			return c.json({ message: "Organization created successfully." }, 200);
 		} catch (err) {
@@ -119,7 +119,7 @@ export class OnboardingController {
 	public static readonly createUserInvite = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const role = c.get("role_name");
+			const permissions = c.get("permissions");
 
 			const { email, role_id } = await c.req.json();
 
@@ -128,29 +128,29 @@ export class OnboardingController {
 			}
 
 			// only Admin can create user invites
-			if (role !== "Admin") {
+			if (!permissions.is_admin || !permissions.is_master) {
 				return c.json({ error: "Only Admin can create user invites." }, 403);
 			}
 
 			const invite = await InviteService.createUserInvite(email, org_id, role_id);
-            const org = await OrgService.getOrg(org_id);
+			const org = await OrgService.getOrg(org_id);
 
-            await onUserOnboardingInvite(email, {
-                accept_link: `https://app.envsync.cloud/onboarding/accept-user-invite/${invite.invite_token}`,
-                org_name: org.name,
-            })
+			await onUserOnboardingInvite(email, {
+				accept_link: `https://app.envsync.cloud/onboarding/accept-user-invite/${invite.invite_token}`,
+				org_name: org.name,
+			});
 
-            // Log the user invite creation
-            await AuditLogService.notifyAuditSystem({
-                action: "user_invite_created",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    invite_id: invite.id,
-                    email,
-                    role_id,
-                }
-            });
+			// Log the user invite creation
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invite_created",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					invite_id: invite.id,
+					email,
+					role_id,
+				},
+			});
 
 			return c.json({ message: "User invite created successfully." }, 201);
 		} catch (err) {
@@ -187,17 +187,17 @@ export class OnboardingController {
 				is_accepted: true,
 			});
 
-            // Log the user invite acceptance
-            await AuditLogService.notifyAuditSystem({
-                action: "user_invite_accepted",
-                org_id: invite.org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    invite_id: invite.id,
-                    email: invite.email,
-                    role_id: invite.role_id,
-                }
-            });
+			// Log the user invite acceptance
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invite_accepted",
+				org_id: invite.org_id,
+				user_id: c.get("user_id"),
+				details: {
+					invite_id: invite.id,
+					email: invite.email,
+					role_id: invite.role_id,
+				},
+			});
 
 			return c.json({ message: "User invite accepted successfully." }, 200);
 		} catch (err) {
@@ -218,17 +218,17 @@ export class OnboardingController {
 
 			const invite = await InviteService.getUserInviteByCode(invite_code);
 
-            // Log the retrieval of the user invite
-            await AuditLogService.notifyAuditSystem({
-                action: "user_invite_viewed",
-                org_id: invite.org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    invite_id: invite.id,
-                    email: invite.email,
-                    role_id: invite.role_id,
-                }
-            });
+			// Log the retrieval of the user invite
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invite_viewed",
+				org_id: invite.org_id,
+				user_id: c.get("user_id"),
+				details: {
+					invite_id: invite.id,
+					email: invite.email,
+					role_id: invite.role_id,
+				},
+			});
 
 			return c.json({ invite }, 200);
 		} catch (err) {
@@ -242,6 +242,13 @@ export class OnboardingController {
 	// update user invite
 	public static readonly updateUserInvite = async (c: Context) => {
 		try {
+			const permissions = c.get("permissions");
+
+			// only Admin can update user invites
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "Only Admin can update user invites." }, 403);
+			}
+
 			const { invite_code } = c.req.param();
 
 			const { role_id } = await c.req.json();
@@ -260,17 +267,17 @@ export class OnboardingController {
 				role_id,
 			});
 
-            // Log the user invite update
-            await AuditLogService.notifyAuditSystem({
-                action: "user_invite_updated",
-                org_id: invite.org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    invite_id: invite.id,
-                    email: invite.email,
-                    role_id,
-                }
-            });
+			// Log the user invite update
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invite_updated",
+				org_id: invite.org_id,
+				user_id: c.get("user_id"),
+				details: {
+					invite_id: invite.id,
+					email: invite.email,
+					role_id,
+				},
+			});
 
 			return c.json({ message: "User invite updated successfully." }, 200);
 		} catch (err) {
@@ -283,28 +290,35 @@ export class OnboardingController {
 
 	public static readonly deleteUserInvite = async (c: Context) => {
 		try {
-            const org_id = c.get("org_id");
+			const org_id = c.get("org_id");
 			const { invite_id } = c.req.param();
+
+			const permissions = c.get("permissions");
+
+			// only Admin can delete user invites
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "Only Admin can delete user invites." }, 403);
+			}
 
 			if (!invite_id) {
 				return c.json({ error: "Invite id is required." }, 400);
 			}
 
-            const invite = await InviteService.getUserInviteById(invite_id);
+			const invite = await InviteService.getUserInviteById(invite_id);
 
 			await InviteService.deleteUserInvite(invite_id);
 
-            // Log the user invite deletion
-            await AuditLogService.notifyAuditSystem({
-                action: "user_invite_deleted",
-                org_id: org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    invite_id: invite_id,
-                    email: invite.email,
-                    role_id: invite.role_id,
-                }
-            });
+			// Log the user invite deletion
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invite_deleted",
+				org_id: org_id,
+				user_id: c.get("user_id"),
+				details: {
+					invite_id: invite_id,
+					email: invite.email,
+					role_id: invite.role_id,
+				},
+			});
 
 			return c.json({ message: "User invite deleted successfully." }, 200);
 		} catch (err) {

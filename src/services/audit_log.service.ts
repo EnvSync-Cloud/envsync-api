@@ -7,9 +7,9 @@ export class AuditLogService {
 		action,
 		org_id,
 		user_id,
-        details
+		details,
 	}: {
-        details: Record<string, any>;
+		details: Record<string, any>;
 		action: string;
 		org_id: string;
 		user_id: string;
@@ -23,25 +23,28 @@ export class AuditLogService {
 				action,
 				org_id,
 				user_id,
-                details: JSON.stringify(details),
+				details: JSON.stringify(details),
 				created_at: new Date(),
-                updated_at: new Date(),
+				updated_at: new Date(),
 			})
 			.execute();
 	};
 
-    public static getAuditLogs = async (org_id: string, { page, per_page }: { page: number; per_page: number }) => {
-        const db = await DB.getInstance();
+	public static getAuditLogs = async (
+		org_id: string,
+		{ page, per_page }: { page: number; per_page: number },
+	) => {
+		const db = await DB.getInstance();
 
-        const auditLogs = await db
-            .selectFrom("audit_log")
-            .selectAll()
-            .where("org_id", "=", org_id)
-            .orderBy("created_at", "desc")
-            .limit(per_page)
-            .offset((page - 1) * per_page)
-            .execute();
+		const auditLogs = await db
+			.selectFrom("audit_log")
+			.selectAll()
+			.where("org_id", "=", org_id)
+			.orderBy("created_at", "desc")
+			.limit(per_page)
+			.offset((page - 1) * per_page)
+			.execute();
 
-        return auditLogs;
-    };
+		return auditLogs;
+	};
 }

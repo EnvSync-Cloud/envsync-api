@@ -1,5 +1,5 @@
 import type { Context, MiddlewareHandler, Next } from "hono";
-import { decode, verify } from "hono/jwt";
+import { decode } from "hono/jwt";
 import { getCookie } from "hono/cookie";
 import { auth0 } from "@/helpers/auth0";
 
@@ -28,7 +28,16 @@ export const authMiddleware = (): MiddlewareHandler => {
 			ctx.set("auth0_user_id", decoded.payload.sub);
 			ctx.set("org_id", user.org_id);
 			ctx.set("role_id", role.id);
-			ctx.set("role_name", role.name);
+
+			ctx.set("permissions", {
+				can_edit: role.can_edit,
+				can_view: role.can_view,
+				have_api_access: role.have_api_access,
+				have_billing_options: role.have_billing_options,
+				have_webhook_access: role.have_webhook_access,
+				is_admin: role.is_admin,
+				is_master: role.is_master,
+			});
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {

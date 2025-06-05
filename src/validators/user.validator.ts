@@ -2,40 +2,45 @@ import z from "zod";
 import "zod-openapi/extend";
 
 export const userResponseSchema = z
-    .object({
-        id: z.string().openapi({ example: "user_123" }),
-        email: z.string().email().openapi({ example: "user@example.com" }),
-        full_name: z.string().openapi({ example: "John Doe" }),
-        profile_picture_url: z.string().nullable().openapi({ example: "https://example.com/avatar.jpg" }),
-        org_id: z.string().openapi({ example: "org_123" }),
-        role_id: z.string().openapi({ example: "role_123" }),
-        auth0_id: z.string().nullable().openapi({ example: "auth0|123" }),
-        is_active: z.boolean().openapi({ example: true }),
-        created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
-        updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
-    })
-    .openapi({ ref: "UserResponse" });
+	.object({
+		id: z.string().openapi({ example: "user_123" }),
+		email: z.string().email().openapi({ example: "user@example.com" }),
+		full_name: z.string().openapi({ example: "John Doe" }),
+		profile_picture_url: z
+			.string()
+			.nullable()
+			.openapi({ example: "https://example.com/avatar.jpg" }),
+		org_id: z.string().openapi({ example: "org_123" }),
+		role_id: z.string().openapi({ example: "role_123" }),
+		auth0_id: z.string().nullable().openapi({ example: "auth0|123" }),
+		is_active: z.boolean().openapi({ example: true }),
+		created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
+		updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
+	})
+	.openapi({ ref: "UserResponse" });
 
-export const usersResponseSchema = z
-    .array(userResponseSchema)
-    .openapi({ ref: "UsersResponse" });
+export const usersResponseSchema = z.array(userResponseSchema).openapi({ ref: "UsersResponse" });
 
 export const updateUserRequestSchema = z
-    .object({
-        full_name: z.string().optional().openapi({ example: "John Smith" }),
-        profile_picture_url: z.string().url().optional().openapi({ example: "https://example.com/new-avatar.jpg" }),
-        email: z.string().email().optional().openapi({ example: "john.smith@example.com" }),
-    })
-    .openapi({ ref: "UpdateUserRequest" });
+	.object({
+		full_name: z.string().optional().openapi({ example: "John Smith" }),
+		profile_picture_url: z
+			.string()
+			.url()
+			.optional()
+			.openapi({ example: "https://example.com/new-avatar.jpg" }),
+		email: z.string().email().optional().openapi({ example: "john.smith@example.com" }),
+	})
+	.openapi({ ref: "UpdateUserRequest" });
 
 export const updateRoleRequestSchema = z
-    .object({
-        role_id: z.string().openapi({ example: "role_123" }),
-    })
-    .openapi({ ref: "UpdateRoleRequest" });
+	.object({
+		role_id: z.string().openapi({ example: "role_123" }),
+	})
+	.openapi({ ref: "UpdateRoleRequest" });
 
 export const updatePasswordRequestSchema = z
-    .object({
-        password: z.string().min(8).openapi({ example: "newSecurePassword123" }),
-    })
-    .openapi({ ref: "UpdatePasswordRequest" });
+	.object({
+		password: z.string().min(8).openapi({ example: "newSecurePassword123" }),
+	})
+	.openapi({ ref: "UpdatePasswordRequest" });

@@ -4,7 +4,7 @@ import z from "zod";
 import "zod-openapi/extend";
 
 export const errorResponseSchema = z
-    .object({
-        error: z.string().openapi({ example: "An error occurred." }),
-    })
-    .openapi({ ref: "ErrorResponse" });
+	.object({
+		error: z.string().openapi({ example: "An error occurred." }),
+	})
+	.openapi({ ref: "ErrorResponse" });

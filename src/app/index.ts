@@ -81,7 +81,7 @@ app.get("/version", ctx => {
 	return ctx.json({
 		version,
 	});
-})
+});
 
 showRoutes(app);
 

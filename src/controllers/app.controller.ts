@@ -8,28 +8,35 @@ export class AppController {
 		try {
 			const org_id = c.get("org_id");
 			const { name, description, metadata } = await c.req.json();
+			
+			const permissions = c.get("permissions");
+			
+			// Apps can only be created by admins or masters in the organization
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "You do not have permission to create apps." }, 403);
+			}
 
-			if (!name || !org_id) {
-				return c.json({ error: "Name and Organization ID are required." }, 400);
+			if (!name) {
+				return c.json({ error: "Name is required." }, 400);
 			}
 
 			const app = await AppService.createApp({
 				name,
 				org_id,
 				description,
-				metadata,
+				metadata: metadata || {},
 			});
 
-            // Log the creation of the app
-            await AuditLogService.notifyAuditSystem({
-                action: "app_created",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    app_id: app.id,
-                    name: app.name,
-                }
-            })
+			// Log the creation of the app
+			await AuditLogService.notifyAuditSystem({
+				action: "app_created",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_id: app.id,
+					name: app.name,
+				},
+			});
 
 			return c.json(app, 201);
 		} catch (err) {
@@ -52,15 +59,15 @@ export class AppController {
 				return c.json({ error: "App does not belong to your organization" }, 403);
 			}
 
-            await AuditLogService.notifyAuditSystem({
-                action: "app_viewed",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    app_id: app.id,
-                    name: app.name,
-                }
-            })
+			await AuditLogService.notifyAuditSystem({
+				action: "app_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_id: app.id,
+					name: app.name,
+				},
+			});
 
 			return c.json(app);
 		} catch (err) {
@@ -77,14 +84,14 @@ export class AppController {
 
 			const apps = await AppService.getAllApps(org_id);
 
-            await AuditLogService.notifyAuditSystem({
-                action: "apps_viewed",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    app_count: apps.length,
-                }
-            })
+			await AuditLogService.notifyAuditSystem({
+				action: "apps_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_count: apps.length,
+				},
+			});
 
 			return c.json(apps);
 		} catch (err) {
@@ -103,6 +110,13 @@ export class AppController {
 
 			const { name, description, metadata } = await c.req.json();
 
+			const permissions = c.get("permissions");
+			
+			// Apps can only be update by admins or masters
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "You do not have permission to update apps." }, 403);
+			}
+
 			const app = await AppService.getApp({ id });
 
 			if (app.org_id !== org_id) {
@@ -115,16 +129,16 @@ export class AppController {
 				metadata,
 			});
 
-            // Log the update of the app
-            await AuditLogService.notifyAuditSystem({
-                action: "app_updated",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    app_id: app.id,
-                    name: app.name,
-                }
-            })
+			// Log the update of the app
+			await AuditLogService.notifyAuditSystem({
+				action: "app_updated",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_id: app.id,
+					name: app.name,
+				},
+			});
 
 			return c.json({ message: "App updated successfully" });
 		} catch (err) {
@@ -143,22 +157,29 @@ export class AppController {
 
 			const app = await AppService.getApp({ id });
 
+			const permissions = c.get("permissions");
+			
+			// Apps can only be delete by admins or masters in the organization
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "You do not have permission to delete apps." }, 403);
+			}
+
 			if (app.org_id !== org_id) {
 				return c.json({ error: "App does not belong to your organization" }, 403);
 			}
 
 			await AppService.deleteApp({ id });
 
-            // Log the deletion of the app
-            await AuditLogService.notifyAuditSystem({
-                action: "app_deleted",
-                org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    app_id: app.id,
-                    name: app.name,
-                }
-            })
+			// Log the deletion of the app
+			await AuditLogService.notifyAuditSystem({
+				action: "app_deleted",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_id: app.id,
+					name: app.name,
+				},
+			});
 
 			return c.json({ message: "App deleted successfully" });
 		} catch (err) {

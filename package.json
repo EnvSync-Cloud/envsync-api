@@ -1,8 +1,8 @@
 {
 	"name": "envsync-api",
+	"version": "0.2.0",
 	"type": "module",
 	"module": "index.ts",
-	"version": "0.1.2",
 	"scripts": {
 		"build": "bun run builder.ts",
 		"db": "bun run scripts/migrate.ts",
@@ -21,6 +21,7 @@
 		"kysely": "^0.28.2",
 		"mustache": "^4.2.0",
 		"node-cache": "^5.1.2",
+		"openid-client": "^6.5.0",
 		"pg": "^8.16.0",
 		"pino": "^9.7.0",
 		"redis": "^5.5.5",

@@ -23,6 +23,13 @@ interface InviteUser extends BaseTable {
 interface OrgRole extends BaseTable {
 	org_id: ColumnType<string>;
 	name: ColumnType<string>;
+	is_admin: ColumnType<boolean>;
+	can_view: ColumnType<boolean>;
+	can_edit: ColumnType<boolean>;
+	have_billing_options: ColumnType<boolean>;
+	have_api_access: ColumnType<boolean>;
+	have_webhook_access: ColumnType<boolean>;
+	is_master?: ColumnType<boolean>;
 }
 
 interface EnvStore extends BaseTable {
@@ -72,6 +79,21 @@ interface Orgs extends BaseTable {
 	metadata: ColumnType<Record<string, any>>;
 }
 
+interface Settings extends BaseTable {
+	user_id: ColumnType<string>;
+	email_notifications: ColumnType<boolean>;
+	theme?: ColumnType<string | null>;
+}
+
+interface ApiKeys extends BaseTable {
+	org_id: ColumnType<string>;
+	user_id: ColumnType<string>;
+	key: ColumnType<string>;
+	description?: ColumnType<string | null>;
+	is_active: ColumnType<boolean>;
+	last_used_at?: ColumnType<Date | null>;
+}
+
 export interface Database {
 	invite_org: InviteOrg;
 	invite_user: InviteUser;
@@ -82,4 +104,6 @@ export interface Database {
 	env_type: EnvType;
 	users: Users;
 	orgs: Orgs;
+	settings: Settings;
+	api_keys: ApiKeys;
 }

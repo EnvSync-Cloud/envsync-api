@@ -42,6 +42,13 @@ export class OrgController {
 
 			const { logo_url, website, name, slug } = await c.req.json();
 
+			// Only master can update the organization details
+			const permissions = c.get("permissions");
+
+			if (!permissions.is_master) {
+				return c.json({ error: "You do not have permission to update the organization." }, 403);
+			}
+
 			const org = await OrgService.getOrg(org_id);
 
 			const updatedData = {
@@ -61,15 +68,18 @@ export class OrgController {
 
 			await OrgService.updateOrg(org_id, updatedData);
 
-            // Log the organization update
-            await AuditLogService.notifyAuditSystem({
-                action: "org_updated",
-                org_id: org_id,
-                user_id: c.get("user_id"),
-                details: {
-                    logo_url, website, name, slug
-                }
-            });
+			// Log the organization update
+			await AuditLogService.notifyAuditSystem({
+				action: "org_updated",
+				org_id: org_id,
+				user_id: c.get("user_id"),
+				details: {
+					logo_url,
+					website,
+					name,
+					slug,
+				},
+			});
 
 			return c.json({ message: "Organization updated successfully." });
 		} catch (err) {

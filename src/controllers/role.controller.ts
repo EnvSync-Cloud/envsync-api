@@ -1,0 +1,175 @@
+import { type Context } from "hono";
+
+import { RoleService } from "@/services/role.service";
+
+export class RoleController {
+	public static readonly getAllRoles = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
+
+			if (!org_id) {
+				return c.json({ error: "Organization ID is required." }, 400);
+			}
+
+			const roles = await RoleService.getRoles(org_id);
+
+			return c.json(roles, 200);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
+
+	public static readonly createRole = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
+
+			const {
+                name,
+                can_edit,
+                can_view,
+                have_api_access,
+                have_billing_options,
+                have_webhook_access,
+                is_admin,
+            } = await c.req.json();
+
+			if (!name || !org_id) {
+				return c.json({ error: "Name and Organization ID are required." }, 400);
+			}
+
+            const permissions = c.get("permissions");
+
+            // Check if the user must have permissions.is_admin or permissions.is_master
+            if (!permissions.is_admin && !permissions.is_master) {
+                return c.json({ error: "You do not have permission to create roles." }, 403);
+            }
+
+			const role = await RoleService.createRole({
+				org_id,
+				name,
+                can_edit,
+                can_view,
+                have_api_access,
+                have_billing_options,
+                have_webhook_access,
+                is_admin,
+                is_master: false
+			});
+
+			return c.json(role, 201);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
+
+    public static readonly deleteRole = async (c: Context) => {
+        try {
+            const id = c.req.param("id");
+            const org_id = c.get("org_id");
+
+            if (!id) {
+                return c.json({ error: "Role ID is required." }, 400);
+            }
+
+            
+            const permissions = c.get("permissions");
+
+            // Check if the user must have permissions.is_admin or permissions.is_master
+            if (!permissions.is_admin && !permissions.is_master) {
+                return c.json({ error: "You do not have permission to delete roles." }, 403);
+            }
+
+            await RoleService.deleteRole(
+                id,
+                org_id
+            );
+
+            return c.json({ message: "Role deleted successfully." }, 200);
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    };
+
+    public static readonly getRoleStats = async (c: Context) => {
+        try {
+            const org_id = c.get("org_id");
+
+            if (!org_id) {
+                return c.json({ error: "Organization ID is required." }, 400);
+            }
+
+            const stats = await RoleService.getRoleStats(org_id);
+
+            return c.json(stats, 200);
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    }
+
+    public static readonly updateRole = async (c: Context) => {
+        try {
+            const id = c.req.param("id");
+
+            const org_id = c.get("org_id");
+
+            const data = await c.req.json();
+
+            if (!id) {
+                return c.json({ error: "Role ID is required." }, 400);
+            }
+
+            
+            const permissions = c.get("permissions");
+
+            // Check if the user must have permissions.is_admin or permissions.is_master
+            if (!permissions.is_admin && !permissions.is_master) {
+                return c.json({ error: "You do not have permission to update roles." }, 403);
+            }
+
+            await RoleService.updateRole(id, org_id, data);
+
+            return c.json({ message: "Role updated successfully." }, 200);
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    }
+
+    public static readonly getRole = async (c: Context) => {
+        try {
+            const id = c.req.param("id");
+            const org_id = c.get("org_id");
+
+            if (!id) {
+                return c.json({ error: "Role ID is required." }, 400);
+            }
+
+            const role = await RoleService.getRole(id);
+
+            if (role.org_id !== org_id) {
+                return c.json({ error: "Role not found in this organization." }, 404);
+            }
+
+            return c.json(role, 200);
+        } catch (err) {
+            console.error(err);
+            if (err instanceof Error) {
+                return c.json({ error: err.message }, 500);
+            }
+        }
+    };
+}
