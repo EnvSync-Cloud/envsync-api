@@ -2,7 +2,7 @@ import { type Context } from "hono";
 
 import { EnvService } from "@/services/env.service";
 import { AuditLogService } from "@/services/audit_log.service";
-import { EnvTypeService } from "dist/services/env_type.service";
+import { EnvTypeService } from "@/services/env_type.service";
 
 export class EnvController {
 	public static readonly createEnv = async (c: Context) => {
