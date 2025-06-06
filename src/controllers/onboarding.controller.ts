@@ -173,7 +173,7 @@ export class OnboardingController {
 			const invite = await InviteService.getUserInviteByCode(invite_code);
 
 			// create user
-			await UserService.createUser({
+			const user = await UserService.createUser({
 				email: invite.email,
 				full_name,
 				password,
@@ -190,7 +190,7 @@ export class OnboardingController {
 			await AuditLogService.notifyAuditSystem({
 				action: "user_invite_accepted",
 				org_id: invite.org_id,
-				user_id: c.get("user_id"),
+				user_id: user.id,
 				details: {
 					invite_id: invite.id,
 					email: invite.email,
