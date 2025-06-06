@@ -58,13 +58,13 @@ export class OnboardingController {
 
 			// Create Roles
 			const roles = await RoleService.createDefaultRoles(org_id);
-			const admin_role_id = roles.find(role => role.name === "Admin")?.id || "";
+			const admin_role_id = roles.find(role => role.name === "Org Admin")?.id || "";
 
 			// Create Env Types
 			await EnvTypeService.createDefaultEnvTypes(org_id);
 
 			// Create User
-			await UserService.createUser({
+			const user = await UserService.createUser({
 				email: invite_data.email,
 				full_name,
 				password,
@@ -81,9 +81,8 @@ export class OnboardingController {
 			await AuditLogService.notifyAuditSystem({
 				action: "org_created",
 				org_id,
-				user_id: c.get("user_id"),
+				user_id: user.id,
 				details: {
-					org_id,
 					name,
 				},
 			});

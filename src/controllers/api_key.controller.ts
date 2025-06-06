@@ -9,6 +9,8 @@ export class ApiKeyController {
 			const org_id = c.get("org_id");
 			const user_id = c.get("user_id");
 
+            console.log("Creating API Key for org_id:", org_id, "and user_id:", user_id);
+
 			const { name, description } = await c.req.json();
 
 			if (!name || !org_id) {

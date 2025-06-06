@@ -2,8 +2,8 @@ import z from "zod";
 import "zod-openapi/extend";
 
 export const getAuditLogsQuerySchema = z.object({
-	page: z.number().min(1).default(1).openapi({ example: 1 }),
-	per_page: z.number().min(1).max(100).default(20).openapi({ example: 20 }),
+	page: z.string().default("1").openapi({ example: "1" }),
+	per_page: z.string().default("20").openapi({ example: "20" }),
 });
 
 export const getAuditLogsResponseSchema = z

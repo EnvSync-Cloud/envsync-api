@@ -59,7 +59,6 @@ export class EnvController {
 				details: {
 					env_id: env.id,
 					key,
-					value,
 					app_id,
 					env_type_id,
 				},
@@ -114,7 +113,6 @@ export class EnvController {
 				user_id: c.get("user_id"),
 				details: {
 					key,
-					value,
 					app_id,
 					env_type_id,
 				},
@@ -314,6 +312,7 @@ export class EnvController {
 					app_id,
 					env_type_id,
 					env_count: envs.length,
+					keys: envs.map(env => env.key),
 				},
 			});
 

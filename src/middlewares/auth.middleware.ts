@@ -28,7 +28,7 @@ export const authMiddleware = (): MiddlewareHandler => {
 				type: token ? "JWT" : "API_KEY"
 			})
 			
-			const user = await UserService.getUserByAuth0Id(access_info.user_id);
+			const user = await UserService.getUser(access_info.user_id);
 			const role = await RoleService.getRole(user.role_id);
 
 			ctx.set("user_id", user.id);
