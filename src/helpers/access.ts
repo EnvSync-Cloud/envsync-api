@@ -1,8 +1,6 @@
-import { decode } from "hono/jwt";
-
-import { auth0 } from "./auth0";
 import { ApiKeyService } from "@/services/api_key.service";
 import { UserService } from "@/services/user.service";
+import { verifyJWTToken } from "./jwt";
 
 export const validateAccess = async (
     {
@@ -15,25 +13,28 @@ export const validateAccess = async (
 ) : Promise<{
     user_id: string;
 }> => {
-    let userId: string = "";
+    try {
+        let userId: string = "";
 
-    if (type === "JWT") {
-        await auth0.oauth.idTokenValidator.validate(token);
-        const decoded = decode(token);
-        let auth0UserId = decoded.payload.sub as string;
+        if (type === "JWT") {
+            const decoded = await verifyJWTToken(token);
+            let auth0UserId = decoded.sub as string;
 
-        const user = await UserService.getUserByAuth0Id(auth0UserId);    
-        userId = user.id;
-    } else if (type === "API_KEY") {
-        const apiKey = await ApiKeyService.getKeyByCreds(token);
-        console.log("API Key:", apiKey);
-        if (!apiKey) {
-            throw new Error("Invalid API key");
+            const user = await UserService.getUserByAuth0Id(auth0UserId);    
+            userId = user.id;
+        } else if (type === "API_KEY") {
+            const apiKey = await ApiKeyService.getKeyByCreds(token);
+            if (!apiKey) {
+                throw new Error("Invalid API key");
+            }
+            userId = apiKey.user_id;
         }
-        userId = apiKey.user_id;
-    }
 
-    return {
-        user_id: userId
-    };
+        return {
+            user_id: userId
+        };
+    }
+    catch (error) {
+        throw new Error("Unauthorized access: " + (error instanceof Error ? error.message : "Unknown error"));
+    }
 }

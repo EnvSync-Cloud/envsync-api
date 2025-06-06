@@ -45,13 +45,11 @@ export const authMiddleware = (): MiddlewareHandler => {
 				is_admin: role.is_admin,
 				is_master: role.is_master,
 			});
-		} catch (err) {
-			console.error(err);
-			if (err instanceof Error) {
-				return ctx.json({ error: err.message }, 401);
-			}
-		} finally {
 			await next();
+		} catch (err) {
+			if( err instanceof Error) {
+				return ctx.json({ error: err.message }, 403);
+			}
 		}
 	};
 };
