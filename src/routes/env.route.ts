@@ -9,7 +9,7 @@ import {
 	updateEnvRequestSchema,
 	deleteEnvRequestSchema,
 	getEnvRequestSchema,
-	batchCreateEnvsRequestSchema,
+	batchEnvsRequestSchema,
 	envResponseSchema,
 	envsResponseSchema,
 } from "@/validators/env.validator";
@@ -135,7 +135,7 @@ app.put(
 			},
 		},
 	}),
-	zValidator("json", batchCreateEnvsRequestSchema),
+	zValidator("json", batchEnvsRequestSchema),
 	EnvController.batchCreateEnvs,
 );
 
@@ -170,7 +170,7 @@ app.delete(
 );
 
 app.patch(
-	"/:key",
+	"/i/:key",
 	describeRoute({
 		operationId: "updateEnv",
 		summary: "Update Environment Variable",
@@ -197,6 +197,36 @@ app.patch(
 	}),
 	zValidator("json", updateEnvRequestSchema),
 	EnvController.updateEnv,
+);
+
+app.patch(
+	"/batch",
+	describeRoute({
+		operationId: "batchUpdateEnvs",
+		summary: "Batch Update Environment Variables",
+		description: "Update multiple environment variables in a single request",
+		tags: ["Environment Variables"],
+		responses: {
+			200: {
+				description: "Environment variables updated successfully",
+				content: {
+					"application/json": {
+						schema: resolver(envsResponseSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	zValidator("json", batchEnvsRequestSchema),
+	EnvController.batchUpdateEnvs,
 );
 
 export default app;

@@ -324,4 +324,47 @@ export class EnvController {
 			}
 		}
 	};
+
+	public static readonly batchUpdateEnvs = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
+			const { app_id, env_type_id, envs } = await c.req.json();
+
+			if (!envs || !Array.isArray(envs)) {
+				return c.json({ error: "envs must be an array." }, 400);
+			}
+
+			const permissions = c.get("permissions");
+			
+			// env_type_id
+			const env_type = await EnvTypeService.getEnvType(env_type_id);
+
+			// env_type's name is "Production", user must have admin permissions
+			if (env_type.name === "Production" && (!permissions.is_admin || !permissions.is_master)) {
+				return c.json({ error: "You do not have permission to create envs in Production." }, 403);
+			}
+
+			await EnvService.batchUpdateEnvs(org_id, app_id, env_type_id, envs);
+
+			// Log the batch update of environment variables
+			await AuditLogService.notifyAuditSystem({
+				action: "envs_batch_updated",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					app_id,
+					env_type_id,
+					env_count: envs.length,
+					keys: envs.map(env => env.key),
+				},
+			});
+
+			return c.json({ message: "Envs updated successfully" }, 200);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	};
 }

@@ -29,7 +29,7 @@ export const getEnvRequestSchema = z
 	})
 	.openapi({ ref: "GetEnvRequest" });
 
-export const batchCreateEnvsRequestSchema = z
+export const batchEnvsRequestSchema = z
 	.object({
 		app_id: z.string().openapi({ example: "app_123" }),
 		env_type_id: z.string().openapi({ example: "env_type_123" }),

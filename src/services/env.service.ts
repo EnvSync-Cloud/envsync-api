@@ -157,4 +157,30 @@ export class EnvService {
 
 		await db.insertInto("env_store").values(envInserts).execute();
 	};
+
+	public static batchUpdateEnvs = async (
+		org_id: string,
+		app_id: string,
+		env_type_id: string,
+		envs: {
+			key: string;
+			value: string;
+		}[],
+	) => {
+		const db = await DB.getInstance();
+
+		for (const env of envs) {
+			await db
+				.updateTable("env_store")
+				.set({
+					value: env.value,
+					updated_at: new Date(),
+				})
+				.where("key", "=", env.key)
+				.where("app_id", "=", app_id)
+				.where("org_id", "=", org_id)
+				.where("env_type_id", "=", env_type_id)
+				.executeTakeFirstOrThrow();
+		}
+	}
 }
