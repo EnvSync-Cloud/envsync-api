@@ -11,8 +11,11 @@ import {
     roleStatsResponseSchema,
 } from "@/validators/role.validator";
 import { errorResponseSchema } from "@/validators/common";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 
 const app = new Hono();
+
+app.use(authMiddleware())
 
 app.get(
     "/",
