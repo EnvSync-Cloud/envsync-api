@@ -16,7 +16,7 @@ export class AppService {
 	}) => {
 		const db = await DB.getInstance();
 
-		const { id } = await db
+		const app = await db
 			.insertInto("app")
 			.values({
 				id: uuidv4(),
@@ -27,10 +27,10 @@ export class AppService {
 				created_at: new Date(),
 				updated_at: new Date(),
 			})
-			.returning("id")
+			.returningAll()
 			.executeTakeFirstOrThrow();
 
-		return { id, name };
+		return app;
 	};
 
 	public static getApp = async ({ id }: { id: string }) => {
