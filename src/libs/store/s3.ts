@@ -1,3 +1,4 @@
+import { randomUUIDv7 } from "bun";
 import { ObjectCannedACL, S3Client, type S3ClientConfig } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 
@@ -39,7 +40,7 @@ export class Uploader {
 	 * @param acl `public-read` or `private` access
 	 */
 	async uploadFile(folderName: string, file: File, acl: ObjectCannedACL) {
-		const s3Key = folderName + "/" + file.name;
+		const s3Key = folderName + "/" + randomUUIDv7() + "-" + file.name;
 		const parallelUploads3 = new Upload({
 			client: Uploader._s3Client,
 			params: {
