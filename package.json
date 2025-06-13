@@ -7,7 +7,8 @@
 		"build": "bun run builder.ts",
 		"db": "bun run scripts/migrate.ts",
 		"dev": "bun run --hot src/entrypoint.ts",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"start": "bun run src/entrypoint.ts"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.821.0",

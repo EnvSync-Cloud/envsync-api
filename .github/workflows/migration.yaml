@@ -1,0 +1,27 @@
+name: Migrate
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+      - run: bun install
+      - run: bun run build
+      - name: Download .env file
+        run: |
+          curl -o .env ${{ secrets.PROD_ENV_URL }}
+      - name: Run Migration
+        run: |
+          bun db latest
+      - name: Notify Deployment
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "Migration completed successfully."}' \
+          ${{ secrets.NOTIFY_HOOK_URL }}
