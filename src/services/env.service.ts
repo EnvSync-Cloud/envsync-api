@@ -33,7 +33,7 @@ export class EnvService {
 			.returning("id")
 			.executeTakeFirstOrThrow();
 
-		return { id, name };
+		return { id };
 	};
 
 	public static getEnv = async ({
@@ -56,7 +56,7 @@ export class EnvService {
 			.where("env_type_id", "=", env_type_id)
 			.where("app_id", "=", app_id)
 			.where("org_id", "=", org_id)
-			.executeTakeFirstOrThrow();
+			.executeTakeFirst();
 
 		return env;
 	};

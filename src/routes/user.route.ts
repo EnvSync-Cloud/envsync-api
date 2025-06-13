@@ -9,7 +9,6 @@ import {
 	usersResponseSchema,
 	updateUserRequestSchema,
 	updateRoleRequestSchema,
-	updatePasswordRequestSchema,
 } from "@/validators/user.validator";
 import { errorResponseSchema } from "@/validators/common";
 
@@ -161,7 +160,6 @@ app.patch(
 			},
 		},
 	}),
-	zValidator("json", updatePasswordRequestSchema),
 	UserController.updatePassword,
 );
 

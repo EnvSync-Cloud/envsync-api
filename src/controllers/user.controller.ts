@@ -137,7 +137,7 @@ export class UserController {
 	public static deleteUser = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const role = c.get("role_name");
+			const permissions = c.get("permissions");
 
 			const { id } = c.req.param();
 
@@ -154,7 +154,7 @@ export class UserController {
 				return c.json({ error: "You do not have permission to delete this user." }, 403);
 			}
 			// Only Admin can delete users
-			if (role !== "Admin") {
+			if (!permissions.is_admin && !permissions.is_master) {
 				return c.json({ error: "You do not have permission to delete this user." }, 403);
 			}
 
@@ -186,7 +186,7 @@ export class UserController {
 	public static readonly updateRole = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const role = c.get("role_name");
+			const permissions = c.get("permissions");
 
 			const { id } = c.req.param();
 			const { role_id } = await c.req.json();
@@ -205,7 +205,7 @@ export class UserController {
 			}
 
 			// Only Admin can update roles
-			if (role !== "Admin") {
+			if (permissions.is_admin !== true && permissions.is_master !== true) {
 				return c.json({ error: "You do not have permission to update roles." }, 403);
 			}
 
@@ -237,13 +237,11 @@ export class UserController {
 	public static readonly updatePassword = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const role = c.get("role_name");
 
 			const { id } = c.req.param();
-			const { password } = await c.req.json();
 
-			if (!id || !password) {
-				return c.json({ error: "ID and password are required." }, 400);
+			if (!id) {
+				return c.json({ error: "ID is required." }, 400);
 			}
 
 			// Check if user exists and belongs to the organization
@@ -253,11 +251,6 @@ export class UserController {
 			}
 			if (user.org_id !== org_id) {
 				return c.json({ error: "You do not have permission to update this user." }, 403);
-			}
-
-			// Only Admin can update passwords
-			if (role !== "Admin") {
-				return c.json({ error: "You do not have permission to update passwords." }, 403);
 			}
 
 			await auth0.database.changePassword({

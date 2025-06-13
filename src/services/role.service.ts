@@ -134,10 +134,10 @@ export class RoleService {
 		const db = await DB.getInstance();
 
 		const role = await db
-			.selectFrom("users")
+			.selectFrom("org_role")
 			.selectAll()
 			.where("org_id", "=", org_id)
-			.executeTakeFirstOrThrow();
+			.execute();
 
 		return role;
 	};

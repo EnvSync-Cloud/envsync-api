@@ -38,9 +38,3 @@ export const updateRoleRequestSchema = z
 		role_id: z.string().openapi({ example: "role_123" }),
 	})
 	.openapi({ ref: "UpdateRoleRequest" });
-
-export const updatePasswordRequestSchema = z
-	.object({
-		password: z.string().min(8).openapi({ example: "newSecurePassword123" }),
-	})
-	.openapi({ ref: "UpdatePasswordRequest" });
