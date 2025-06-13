@@ -15,7 +15,7 @@ jobs:
       - run: bun install
       - run: bun run build
       - run: |
-          curl ${{ secrets.DEPLOYMENT_HOOK_URL }}/deploy?key=${{ secrets.API_DEPLOYMENT_NAME }}&branch=${{ secrets.DEV_DEPLOYMENT_TYPE }}&token=${{ secrets.DEPLOYMENT_TOKEN }}
+          curl ${{ secrets.DEV_DEPLOYMENT_HOOK }}
       - name: Notify Deployment
         run: |
           curl -X POST -H "Content-Type: application/json" \
