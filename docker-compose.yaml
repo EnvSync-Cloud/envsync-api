@@ -5,7 +5,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: envsync_api
     env_file:
       - .env
     ports:
