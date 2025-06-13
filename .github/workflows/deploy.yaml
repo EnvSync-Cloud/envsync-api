@@ -1,0 +1,23 @@
+name: Deploy API (Prod)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Bun Runtime
+        uses: antongolub/action-setup-bun@v1
+      - run: bun install
+      - run: bun run build
+      - run: |
+          curl ${{ secrets.DEPLOYMENT_HOOK_URL }}/deploy?key=${{ secrets.API_DEPLOYMENT_NAME }}&branch=${{ secrets.PROD_DEPLOYMENT_TYPE }}&token=${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Notify Deployment
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -d '{"text": "Deployment to production completed successfully."}' \
+          ${{ secrets.NOTIFY_HOOK_URL }}

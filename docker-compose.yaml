@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  envsync_api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: envsync_api
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:${PORT}
+    restart: always
