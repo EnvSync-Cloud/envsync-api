@@ -1,6 +1,7 @@
 import { type Context } from "hono";
 
 import { RoleService } from "@/services/role.service";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class RoleController {
 	public static readonly getAllRoles = async (c: Context) => {
@@ -34,6 +35,7 @@ export class RoleController {
                 have_billing_options,
                 have_webhook_access,
                 is_admin,
+                color
             } = await c.req.json();
 
 			if (!name || !org_id) {
@@ -56,8 +58,21 @@ export class RoleController {
                 have_billing_options,
                 have_webhook_access,
                 is_admin,
-                is_master: false
+                is_master: false,
+                color
 			});
+
+            // Log the creation of the role
+            await AuditLogService.notifyAuditSystem({
+                action: "role_created",
+                org_id,
+                user_id: c.get("user_id"),
+                message: `Role ${role.name} created.`,
+                details: {
+                    role_id: role.id,
+                    name: role.name,
+                },
+            });
 
 			return c.json(role, 201);
 		} catch (err) {
@@ -89,6 +104,17 @@ export class RoleController {
                 id,
                 org_id
             );
+
+            // Log the deletion of the role
+            await AuditLogService.notifyAuditSystem({
+                action: "role_deleted",
+                org_id,
+                user_id: c.get("user_id"),
+                message: `Role with ID ${id} deleted.`,
+                details: {
+                    role_id: id,
+                },
+            });
 
             return c.json({ message: "Role deleted successfully." }, 200);
         } catch (err) {
@@ -139,6 +165,17 @@ export class RoleController {
             }
 
             await RoleService.updateRole(id, org_id, data);
+
+            // Log the update of the role
+            await AuditLogService.notifyAuditSystem({
+                action: "role_updated",
+                org_id,
+                user_id: c.get("user_id"),
+                message: `Role with ID ${id} updated.`,
+                details: {
+                    role_id: id,
+                },
+            });
 
             return c.json({ message: "Role updated successfully." }, 200);
         } catch (err) {

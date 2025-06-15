@@ -262,4 +262,33 @@ app.delete(
 	OnboardingController.deleteUserInvite,
 );
 
+app.get(
+	"/user",
+	describeRoute({
+		operationId: "getAllUserInvites",
+		summary: "Get All User Invites",
+		description: "Get all user invites",
+		tags: ["Onboarding"],
+		responses: {
+			200: {
+				description: "User invites retrieved successfully",
+				content: {
+					"application/json": {
+						schema: resolver(getUserInviteByTokenResponseSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	OnboardingController.getAllUserInvites,
+);
+
 export default app;

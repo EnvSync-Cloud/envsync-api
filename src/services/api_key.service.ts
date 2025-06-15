@@ -123,4 +123,17 @@ export class ApiKeyService {
 
 		return key;
 	};
+
+	public static registerKeyUsage = async (id: string) => {
+		const db = await DB.getInstance();
+
+		await db
+			.updateTable("api_keys")
+			.set({
+				last_used_at: new Date(),
+				updated_at: new Date(),
+			})
+			.where("id", "=", id)
+			.execute();
+	}
 }

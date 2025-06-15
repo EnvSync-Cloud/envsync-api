@@ -24,9 +24,14 @@ export const validateAccess = async (
             userId = user.id;
         } else if (type === "API_KEY") {
             const apiKey = await ApiKeyService.getKeyByCreds(token);
+            
             if (!apiKey) {
                 throw new Error("Invalid API key");
             }
+
+            // registerKeyUsage
+            await ApiKeyService.registerKeyUsage(apiKey.id);
+
             userId = apiKey.user_id;
         }
 

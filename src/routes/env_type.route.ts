@@ -8,13 +8,14 @@ import {
 import { authMiddleware } from "@/middlewares/auth.middleware";
 import { EnvTypeController } from "@/controllers/env_type.controller";
 import {
-	// createEnvTypeRequestSchema,
-	// updateEnvTypeRequestSchema,
+	createEnvTypeRequestSchema,
+	updateEnvTypeRequestSchema,
 	envTypeResponseSchema,
 	envTypesResponseSchema,
-	// deleteEnvTypeRequestSchema,
+	deleteEnvTypeRequestSchema,
 } from "@/validators/env_type.validator";
 import { errorResponseSchema } from "@/validators/common";
+import { validator as zValidator } from "hono-openapi/zod";
 
 const app = new Hono();
 
@@ -78,93 +79,93 @@ app.get(
 	EnvTypeController.getEnvType,
 );
 
-// app.post(
-// 	"/",
-// 	describeRoute({
-// 		operationId: "createEnvType",
-// 		summary: "Create Environment Type",
-// 		description: "Create a new environment type",
-// 		tags: ["Environment Types"],
-// 		responses: {
-// 			201: {
-// 				description: "Environment type created successfully",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(envTypeResponseSchema),
-// 					},
-// 				},
-// 			},
-// 			500: {
-// 				description: "Internal server error",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(errorResponseSchema),
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}),
-// 	zValidator("json", createEnvTypeRequestSchema),
-// 	EnvTypeController.createEnvType,
-// );
+app.post(
+	"/",
+	describeRoute({
+		operationId: "createEnvType",
+		summary: "Create Environment Type",
+		description: "Create a new environment type",
+		tags: ["Environment Types"],
+		responses: {
+			201: {
+				description: "Environment type created successfully",
+				content: {
+					"application/json": {
+						schema: resolver(envTypeResponseSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	zValidator("json", createEnvTypeRequestSchema),
+	EnvTypeController.createEnvType,
+);
 
-// app.patch(
-// 	"/:id",
-// 	describeRoute({
-// 		operationId: "updateEnvType",
-// 		summary: "Update Environment Type",
-// 		description: "Update an existing environment type",
-// 		tags: ["Environment Types"],
-// 		responses: {
-// 			200: {
-// 				description: "Environment type updated successfully",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(envTypeResponseSchema),
-// 					},
-// 				},
-// 			},
-// 			500: {
-// 				description: "Internal server error",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(errorResponseSchema),
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}),
-// 	zValidator("json", updateEnvTypeRequestSchema),
-// 	EnvTypeController.updateEnvType,
-// );
+app.patch(
+	"/:id",
+	describeRoute({
+		operationId: "updateEnvType",
+		summary: "Update Environment Type",
+		description: "Update an existing environment type",
+		tags: ["Environment Types"],
+		responses: {
+			200: {
+				description: "Environment type updated successfully",
+				content: {
+					"application/json": {
+						schema: resolver(envTypeResponseSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	zValidator("json", updateEnvTypeRequestSchema),
+	EnvTypeController.updateEnvType,
+);
 
-// app.delete(
-// 	"/:id",
-// 	describeRoute({
-// 		operationId: "deleteEnvType",
-// 		summary: "Delete Environment Type",
-// 		description: "Delete an existing environment type",
-// 		tags: ["Environment Types"],
-// 		responses: {
-// 			200: {
-// 				description: "Environment type deleted successfully",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(deleteEnvTypeRequestSchema),
-// 					},
-// 				},
-// 			},
-// 			500: {
-// 				description: "Internal server error",
-// 				content: {
-// 					"application/json": {
-// 						schema: resolver(errorResponseSchema),
-// 					},
-// 				},
-// 			},
-// 		},
-// 	}),
-// 	EnvTypeController.deleteEnvType,
-// );
+app.delete(
+	"/:id",
+	describeRoute({
+		operationId: "deleteEnvType",
+		summary: "Delete Environment Type",
+		description: "Delete an existing environment type",
+		tags: ["Environment Types"],
+		responses: {
+			200: {
+				description: "Environment type deleted successfully",
+				content: {
+					"application/json": {
+						schema: resolver(deleteEnvTypeRequestSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	EnvTypeController.deleteEnvType,
+);
 
 export default app;
