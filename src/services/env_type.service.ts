@@ -3,7 +3,16 @@ import { v4 as uuidv4 } from "uuid";
 import { DB } from "@/libs/db";
 
 export class EnvTypeService {
-	public static createEnvType = async ({ name, org_id }: { name: string; org_id: string }) => {
+	public static createEnvType = async ({
+		name,
+		org_id,
+		app_id,
+		color,
+		is_default,
+		is_protected
+	}: {
+		name: string; org_id: string; app_id: string; color: string; is_default: boolean; is_protected: boolean;
+	}) => {
 		const db = await DB.getInstance();
 
 		const { id } = await db
@@ -12,6 +21,10 @@ export class EnvTypeService {
 				id: uuidv4(),
 				name,
 				org_id,
+				app_id,
+				color,
+				is_default,
+				is_protected,
 				created_at: new Date(),
 				updated_at: new Date(),
 			})
@@ -19,31 +32,6 @@ export class EnvTypeService {
 			.executeTakeFirstOrThrow();
 
 		return { id, name };
-	};
-
-	public static createDefaultEnvTypes = async (org_id: string) => {
-		const db = await DB.getInstance();
-
-		const rawEnvTypes = [
-			{ name: "Production", org_id },
-			{ name: "Staging", org_id },
-			{ name: "Development", org_id },
-		];
-
-		const env_typeInserts = rawEnvTypes.map(env_type => ({
-			id: uuidv4(),
-			...env_type,
-			created_at: new Date(),
-			updated_at: new Date(),
-		}));
-
-		const env_types = await db
-			.insertInto("env_type")
-			.values(env_typeInserts)
-			.returningAll()
-			.execute();
-
-		return env_types;
 	};
 
 	public static getEnvTypes = async (org_id: string) => {
@@ -74,6 +62,9 @@ export class EnvTypeService {
 		id: string,
 		data: {
 			name?: string;
+			color?: string;
+			is_default?: boolean;
+			is_protected?: boolean;
 		},
 	) => {
 		const db = await DB.getInstance();

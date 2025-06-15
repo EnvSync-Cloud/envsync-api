@@ -13,6 +13,7 @@ export class RoleService {
 		have_webhook_access,
 		is_admin,
 		is_master,
+		color
 	}: {
 		name: string;
 		org_id: string;
@@ -23,6 +24,7 @@ export class RoleService {
 		have_webhook_access: boolean;
 		is_admin: boolean;
 		is_master: boolean;
+		color: string;
 	}) => {
 		const db = await DB.getInstance();
 
@@ -31,6 +33,7 @@ export class RoleService {
 			.values({
 				id: uuidv4(),
 				name,
+				color: color || "#000000", // Default color, can be changed later
 				org_id,
 				can_edit,
 				can_view,
@@ -61,6 +64,7 @@ export class RoleService {
 				have_webhook_access: true,
 				is_admin: true,
 				is_master: true,
+				color: "#FF5733", // Example color for Org Admin
 			},
 			{
 				name: "Billing Admin",
@@ -70,6 +74,7 @@ export class RoleService {
 				have_billing_options: true,
 				have_webhook_access: false,
 				is_admin: false,
+				color: "#33FF57", // Example color for Billing Admin
 			},
 			{
 				name: "Manager",
@@ -79,6 +84,7 @@ export class RoleService {
 				have_billing_options: false,
 				have_webhook_access: true,
 				is_admin: false,
+				color: "#3357FF", // Example color for Manager
 			},
 			{
 				name: "Developer",
@@ -88,6 +94,7 @@ export class RoleService {
 				have_billing_options: false,
 				have_webhook_access: false,
 				is_admin: false,
+				color: "#572F13", // Example color for Developer
 			},
 			{
 				name: "Viewer",
@@ -97,6 +104,7 @@ export class RoleService {
 				have_billing_options: false,
 				have_webhook_access: false,
 				is_admin: false,
+				color: "#FF33A1", // Example color for Viewer
 			},
 		];
 
@@ -174,6 +182,7 @@ export class RoleService {
 			have_webhook_access?: boolean;
 			is_admin?: boolean;
 			is_master?: boolean;
+			color?: string;
 		},
 	) => {
 		const db = await DB.getInstance();

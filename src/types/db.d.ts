@@ -29,6 +29,7 @@ interface OrgRole extends BaseTable {
 	have_billing_options: ColumnType<boolean>;
 	have_api_access: ColumnType<boolean>;
 	have_webhook_access: ColumnType<boolean>;
+	color: ColumnType<string>;
 	is_master?: ColumnType<boolean>;
 }
 
@@ -45,6 +46,7 @@ interface AuditLog extends BaseTable {
 	user_id: ColumnType<string>;
 	action: ColumnType<string>;
 	details: ColumnType<string>;
+	message: ColumnType<string>;
 }
 
 interface App extends BaseTable {
@@ -57,6 +59,10 @@ interface App extends BaseTable {
 interface EnvType extends BaseTable {
 	org_id: ColumnType<string>;
 	name: ColumnType<string>;
+	app_id: ColumnType<string>;
+	is_default: ColumnType<boolean>;
+	is_protected: ColumnType<boolean>;
+	color: ColumnType<string>;
 }
 
 interface Users extends BaseTable {

@@ -8,11 +8,13 @@ export class AuditLogService {
 		org_id,
 		user_id,
 		details,
+		message,
 	}: {
 		details: Record<string, any>;
 		action: string;
 		org_id: string;
 		user_id: string;
+		message: string;
 	}) => {
 		const db = await DB.getInstance();
 
@@ -24,6 +26,7 @@ export class AuditLogService {
 				org_id,
 				user_id,
 				details: JSON.stringify(details),
+				message,
 				created_at: new Date(),
 				updated_at: new Date(),
 			})
@@ -45,6 +48,17 @@ export class AuditLogService {
 			.offset((page - 1) * per_page)
 			.execute();
 
-		return auditLogs;
+		const totalCount = await db
+			.selectFrom("audit_log")
+			.select(db.fn.count<number>("id").as("count"))
+			.where("org_id", "=", org_id)
+			.executeTakeFirstOrThrow();
+
+		const totalPages = Math.ceil(totalCount.count / per_page);
+
+		return {
+			auditLogs,
+			totalPages,
+		};
 	};
 }

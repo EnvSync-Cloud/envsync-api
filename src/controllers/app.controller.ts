@@ -36,6 +36,7 @@ export class AppController {
 					app_id: app.id,
 					name: app.name,
 				},
+				message: `App ${app.name} created.`,
 			});
 
 			return c.json(app, 201);
@@ -63,13 +64,22 @@ export class AppController {
 				action: "app_viewed",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `App ${app.name} viewed.`,
 				details: {
 					app_id: app.id,
 					name: app.name,
 				},
 			});
 
-			return c.json(app);
+			const env_types = await AppService.getAppEnvTypes({
+				app_id: app.id,
+			});
+
+			const envCount = await AppService.getEnvCountByApp({
+				app_id: app.id,
+			});
+
+			return c.json({app, env_types, envCount});
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
@@ -84,16 +94,36 @@ export class AppController {
 
 			const apps = await AppService.getAllApps(org_id);
 
+			if (!apps || apps.length === 0) {
+				return c.json({ error: "No apps found for this organization." }, 404);
+			}
+
 			await AuditLogService.notifyAuditSystem({
 				action: "apps_viewed",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Apps viewed`,
 				details: {
 					app_count: apps.length,
 				},
 			});
 
-			return c.json(apps);
+			// Return the list of apps
+			// This could be optimized to include env_types in the response
+			const appsWithEnvTypes = await Promise.all(
+				apps.map(async (app) => {
+					const env_types = await AppService.getAppEnvTypes({
+						app_id: app.id,
+					});
+					// Optionally, you can also get the environment count for each app
+					const envCount = await AppService.getEnvCountByApp({
+						app_id: app.id,
+					});
+					return { ...app, env_types, envCount };
+				})
+			);
+
+			return c.json(appsWithEnvTypes);
 		} catch (err) {
 			console.error(err);
 			if (err instanceof Error) {
@@ -134,6 +164,7 @@ export class AppController {
 				action: "app_updated",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `App ${app.name} updated.`,
 				details: {
 					app_id: app.id,
 					name: app.name,
@@ -175,6 +206,7 @@ export class AppController {
 				action: "app_deleted",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `App ${app.name} deleted.`,
 				details: {
 					app_id: app.id,
 					name: app.name,

@@ -1,3 +1,4 @@
+import { color } from "bun";
 import z from "zod";
 import "zod-openapi/extend";
 
@@ -10,6 +11,10 @@ export const createRoleRequestSchema = z
         have_billing_options: z.boolean().openapi({ example: false }),
         have_webhook_access: z.boolean().openapi({ example: false }),
         is_admin: z.boolean().openapi({ example: false }),
+        color: z
+            .string()
+            .optional()
+            .openapi({ example: "#FF5733" }),
     })
     .openapi({ ref: "CreateRoleRequest" });
 
@@ -23,6 +28,10 @@ export const roleResponseSchema = z
         have_api_access: z.boolean().openapi({ example: false }),
         have_billing_options: z.boolean().openapi({ example: false }),
         have_webhook_access: z.boolean().openapi({ example: false }),
+        color: z
+            .string()
+            .optional()
+            .openapi({ example: "#FF5733" }),
         is_admin: z.boolean().openapi({ example: false }),
         is_master: z.boolean().openapi({ example: false }),
         created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
@@ -43,6 +52,10 @@ export const updateRoleRequestSchema = z
         have_billing_options: z.boolean().optional().openapi({ example: false }),
         have_webhook_access: z.boolean().optional().openapi({ example: true }),
         is_admin: z.boolean().optional().openapi({ example: false }),
+        color: z
+            .string()
+            .optional()
+            .openapi({ example: "#FF5733" }),
     })
     .openapi({ ref: "UpdateRoleRequest" });
 

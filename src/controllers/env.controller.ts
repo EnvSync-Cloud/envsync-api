@@ -56,6 +56,7 @@ export class EnvController {
 				action: "env_created",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Environment variable ${key} created in app ${app_id} for environment type ${env_type_id}.`,
 				details: {
 					env_id: env.id,
 					key,
@@ -111,6 +112,7 @@ export class EnvController {
 				action: "env_updated",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Environment variable ${key} updated in app ${app_id} for environment type ${env_type_id}.`,
 				details: {
 					key,
 					app_id,
@@ -163,6 +165,7 @@ export class EnvController {
 				action: "env_deleted",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Environment variable ${key} deleted from app ${app_id} for environment type ${env_type_id}.`,
 				details: {
 					app_id,
 					env_type_id,
@@ -216,6 +219,7 @@ export class EnvController {
 				action: "env_viewed",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Environment variable ${key} viewed in app ${app_id} for environment type ${env_type_id}.`,
 				details: {
 					app_id,
 					env_type_id,
@@ -267,6 +271,7 @@ export class EnvController {
 				action: "envs_viewed",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Environment variables viewed in app ${app_id} for environment type ${env_type_id}.`,
 				details: {
 					app_id,
 					env_type_id,
@@ -308,6 +313,7 @@ export class EnvController {
 				action: "envs_batch_created",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Batch creation of environment variables in app ${app_id} for environment type ${env_type_id} for keys: ${envs.map(env => env.key).join(", ")}.`,
 				details: {
 					app_id,
 					env_type_id,
@@ -351,6 +357,7 @@ export class EnvController {
 				action: "envs_batch_updated",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `Batch update of environment variables in app ${app_id} for environment type ${env_type_id} for keys: ${envs.map(env => env.key).join(", ")}.`,
 				details: {
 					app_id,
 					env_type_id,
@@ -367,4 +374,47 @@ export class EnvController {
 			}
 		}
 	};
+
+	public static readonly batchDeleteEnvs = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
+			const { app_id, env_type_id, keys } = await c.req.json();
+
+			if (!keys || !Array.isArray(keys)) {
+				return c.json({ error: "keys must be an array." }, 400);
+			}
+
+			const permissions = c.get("permissions");
+			
+			// env_type_id
+			const env_type = await EnvTypeService.getEnvType(env_type_id);
+
+			// env_type's name is "Production", user must have admin permissions
+			if (env_type.name === "Production" && (!permissions.is_admin || !permissions.is_master)) {
+				return c.json({ error: "You do not have permission to create envs in Production." }, 403);
+			}
+
+			await EnvService.batchDeleteEnvs(org_id, app_id, env_type_id, keys);
+
+			// Log the batch deletion of environment variables
+			await AuditLogService.notifyAuditSystem({
+				action: "envs_batch_deleted",
+				org_id,
+				user_id: c.get("user_id"),
+				message: `Batch deletion of environment variables in app ${app_id} for environment type ${env_type_id} for keys: ${keys.join(", ")}.`,
+				details: {
+					app_id,
+					env_type_id,
+					keys,
+				},
+			});
+
+			return c.json({ message: "Envs deleted successfully" }, 200);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	}
 }

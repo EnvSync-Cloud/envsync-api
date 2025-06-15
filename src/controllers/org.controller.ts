@@ -73,6 +73,7 @@ export class OrgController {
 				action: "org_updated",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `Organization ${org.name} updated.`,
 				details: {
 					logo_url,
 					website,

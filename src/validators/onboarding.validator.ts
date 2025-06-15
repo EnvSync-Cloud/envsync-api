@@ -106,3 +106,20 @@ export const deleteUserInviteResponseSchema = z
 		message: z.string().openapi({ example: "User invite deleted successfully." }),
 	})
 	.openapi({ ref: "DeleteUserInviteResponse" });
+
+export const getAllUserInvitesResponseSchema = z
+	.object({
+		invites: z.array(
+			z.object({
+				id: z.string().openapi({ example: "INVITE_ID" }),
+				org_id: z.string().openapi({ example: "ORG_ID" }),
+				created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
+				updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
+				email: z.string().email().openapi({ example: "user@example.com" }),
+				invite_token: z.string().openapi({ example: "INVITE_TOKEN" }),
+				is_accepted: z.boolean().openapi({ example: false }),
+				role_id: z.string().openapi({ example: "ROLE_ID" }),
+			})
+		),
+	})
+	.openapi({ ref: "GetAllUserInvitesResponse" });

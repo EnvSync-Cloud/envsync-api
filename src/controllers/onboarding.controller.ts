@@ -8,6 +8,7 @@ import { UserService } from "@/services/user.service";
 import { InviteService } from "@/services/invite.service";
 import { onOrgOnboardingInvite, onUserOnboardingInvite } from "@/libs/mail";
 import { AuditLogService } from "@/services/audit_log.service";
+import { isPasswordStrong } from "@/utils/password";
 
 export class OnboardingController {
 	public static readonly createOrgInvite = async (c: Context) => {
@@ -18,10 +19,10 @@ export class OnboardingController {
 				return c.json({ error: "Email is required." }, 400);
 			}
 
-			const invite_data = await InviteService.createOrgInvite(email);
+			const invite_code = await InviteService.createOrgInvite(email);
 
 			await onOrgOnboardingInvite(email, {
-				accept_link: `https://app.envsync.cloud/onboarding/accept-org-invite/${invite_data}`,
+				accept_link: `https://envsync.cloud/onboarding/accept-org-invite/${invite_code}`,
 			});
 
 			return c.json({ message: "Organization invite created successfully." }, 201);
@@ -46,7 +47,17 @@ export class OnboardingController {
 				return c.json({ error: "All fields are required." }, 400);
 			}
 
+			if (!isPasswordStrong(password)) {
+				return c.json({ error: "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character." }, 400);
+			}
+
 			const invite_data = await InviteService.getOrgInviteByCode(invite_code);
+			if (!invite_data) {
+				return c.json({ error: "Invite not found." }, 404);
+			}
+			if (invite_data.is_accepted) {
+				return c.json({ error: "Invite already accepted." }, 400);
+			}
 
 			// Create Org
 			const org_id = await OrgService.createOrg({
@@ -59,9 +70,6 @@ export class OnboardingController {
 			// Create Roles
 			const roles = await RoleService.createDefaultRoles(org_id);
 			const admin_role_id = roles.find(role => role.name === "Org Admin")?.id || "";
-
-			// Create Env Types
-			await EnvTypeService.createDefaultEnvTypes(org_id);
 
 			// Create User
 			const user = await UserService.createUser({
@@ -82,6 +90,7 @@ export class OnboardingController {
 				action: "org_created",
 				org_id,
 				user_id: user.id,
+				message: `Organization created.`,
 				details: {
 					name,
 				},
@@ -135,7 +144,7 @@ export class OnboardingController {
 			const org = await OrgService.getOrg(org_id);
 
 			await onUserOnboardingInvite(email, {
-				accept_link: `https://app.envsync.cloud/onboarding/accept-user-invite/${invite.invite_token}`,
+				accept_link: `https://envsync.cloud/onboarding/accept-user-invite/${invite.invite_token}`,
 				org_name: org.name,
 			});
 
@@ -144,6 +153,7 @@ export class OnboardingController {
 				action: "user_invite_created",
 				org_id,
 				user_id: c.get("user_id"),
+				message: `User invite created for ${email}.`,
 				details: {
 					invite_id: invite.id,
 					email,
@@ -170,7 +180,18 @@ export class OnboardingController {
 				return c.json({ error: "All fields are required." }, 400);
 			}
 
+			if (!isPasswordStrong(password)) {
+				return c.json({ error: "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character." }, 400);
+			}
+
+			// Check if the invite code is valid and not already accepted
 			const invite = await InviteService.getUserInviteByCode(invite_code);
+			if (!invite) {
+				return c.json({ error: "Invite not found." }, 404);
+			}
+			if (invite.is_accepted) {
+				return c.json({ error: "Invite already accepted." }, 400);
+			}
 
 			// create user
 			const user = await UserService.createUser({
@@ -191,6 +212,7 @@ export class OnboardingController {
 				action: "user_invite_accepted",
 				org_id: invite.org_id,
 				user_id: user.id,
+				message: `User invite accepted`,
 				details: {
 					invite_id: invite.id,
 					email: invite.email,
@@ -216,18 +238,6 @@ export class OnboardingController {
 			}
 
 			const invite = await InviteService.getUserInviteByCode(invite_code);
-
-			// Log the retrieval of the user invite
-			await AuditLogService.notifyAuditSystem({
-				action: "user_invite_viewed",
-				org_id: invite.org_id,
-				user_id: c.get("user_id"),
-				details: {
-					invite_id: invite.id,
-					email: invite.email,
-					role_id: invite.role_id,
-				},
-			});
 
 			return c.json({ invite }, 200);
 		} catch (err) {
@@ -271,6 +281,7 @@ export class OnboardingController {
 				action: "user_invite_updated",
 				org_id: invite.org_id,
 				user_id: c.get("user_id"),
+				message: `User invite updated for ${invite.email}.`,
 				details: {
 					invite_id: invite.id,
 					email: invite.email,
@@ -312,6 +323,7 @@ export class OnboardingController {
 				action: "user_invite_deleted",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `User invite deleted for ${invite.email}.`,
 				details: {
 					invite_id: invite_id,
 					email: invite.email,
@@ -327,4 +339,37 @@ export class OnboardingController {
 			}
 		}
 	};
+
+	public static readonly getAllUserInvites = async (c: Context) => {
+		try {
+			const org_id = c.get("org_id");
+
+			const permissions = c.get("permissions");
+
+			// only Admin can get user invites
+			if (!permissions.is_admin || !permissions.is_master) {
+				return c.json({ error: "Only Admin can view user invites." }, 403);
+			}
+
+			const invites = await InviteService.getAllUserInvites(org_id);
+
+			// Log the retrieval of user invites
+			await AuditLogService.notifyAuditSystem({
+				action: "user_invites_retrieved",
+				org_id,
+				user_id: c.get("user_id"),
+				message: `User invites retrieved.`,
+				details: {
+					invites_count: invites.length,
+				},
+			});
+
+			return c.json({ invites }, 200);
+		} catch (err) {
+			console.error(err);
+			if (err instanceof Error) {
+				return c.json({ error: err.message }, 500);
+			}
+		}
+	}
 }

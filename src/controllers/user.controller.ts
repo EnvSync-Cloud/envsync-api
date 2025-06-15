@@ -16,6 +16,7 @@ export class UserController {
 				action: "users_retrieved",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `retrieved all users.`,
 				details: {
 					count: users.length,
 				},
@@ -54,6 +55,7 @@ export class UserController {
 				action: "user_retrieved",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `retrieved user with ID ${id}.`,
 				details: {
 					user_id: id,
 				},
@@ -115,6 +117,7 @@ export class UserController {
 				action: "user_updated",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `updated user with ID ${id}.`,
 				details: {
 					user_id: id,
 					fields: {
@@ -168,6 +171,7 @@ export class UserController {
 				action: "user_deleted",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `deleted user with ID ${id}.`,
 				details: {
 					user_id: id,
 				},
@@ -218,6 +222,7 @@ export class UserController {
 				action: "user_role_updated",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `updated role for user with ID ${id}.`,
 				details: {
 					user_id: id,
 					role_id: role_id,
@@ -264,6 +269,7 @@ export class UserController {
 				action: "password_update_requested",
 				org_id: org_id,
 				user_id: c.get("user_id"),
+				message: `requested password update for user with ID ${id}.`,
 				details: {
 					user_id: id,
 				},
