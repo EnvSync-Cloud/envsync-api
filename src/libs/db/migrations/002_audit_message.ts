@@ -15,7 +15,9 @@ export async function up(db: Kysely<Database>): Promise<void> {
 
     await db.schema
         .alterTable("env_type")
-        .addForeignKeyConstraint("fk_env_type_app_id", ["app_id"], "app", ["id"])
+        .addForeignKeyConstraint("fk_env_type_app_id", ["app_id"], "app", ["id"], cb =>
+			cb.onDelete("cascade"),
+        )
         .execute();
 
     await db.schema
@@ -31,6 +33,11 @@ export async function up(db: Kysely<Database>): Promise<void> {
     await db.schema
         .alterTable("env_type")
         .addColumn("color", "text", (col) => col.notNull().defaultTo("#000000"))
+        .execute();
+
+    await db.schema
+        .alterTable("env_type")
+        .dropConstraint("uq_env_type_org_id_name")
         .execute();
 }
 
@@ -58,5 +65,10 @@ export async function down(db: Kysely<Database>): Promise<void> {
     await db.schema
         .alterTable("env_type")
         .dropColumn("color")
+        .execute();
+
+    await db.schema
+        .alterTable("env_type")
+        .addUniqueConstraint("uq_env_type_org_id_name", ["org_id", "name"])
         .execute();
 }

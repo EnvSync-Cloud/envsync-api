@@ -95,7 +95,7 @@ export class AppController {
 			const apps = await AppService.getAllApps(org_id);
 
 			if (!apps || apps.length === 0) {
-				return c.json({ error: "No apps found for this organization." }, 404);
+				return c.json([], 200);
 			}
 
 			await AuditLogService.notifyAuditSystem({
