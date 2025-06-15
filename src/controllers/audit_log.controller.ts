@@ -27,6 +27,7 @@ export class AuditLogController {
 				action: "get_audit_logs",
 				user_id,
 				org_id,
+				message: `Retrieved audit logs.`,
 				details: {
 					page: Number(page) || 1,
 					per_page: Number(per_page) || 25,

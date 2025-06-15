@@ -20,6 +20,7 @@ export const cliMiddleware = (): MiddlewareHandler => {
 				user_id,
 				org_id,
 				action: "cli_command_executed",
+				message: `Executed CLI command: ${command}`,
 				details: {
 					command,
 				},

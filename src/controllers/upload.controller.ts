@@ -1,13 +1,11 @@
 import { type Context } from "hono";
 
-import { RoleService } from "@/services/role.service";
 import { Uploader } from "@/libs/store/s3";
 import { config } from "@/utils/env";
 
 export class UploadController {
     public static readonly uploadFile = async (c: Context) => {
         try {
-            const user_Id = c.get("user_id");
             const upload = new Uploader(config.S3_BUCKET);
 
             const {

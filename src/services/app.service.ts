@@ -78,4 +78,28 @@ export class AppService {
 
 		return apps;
 	};
+
+	public static getAppEnvTypes = async ({ app_id }: { app_id: string }) => {
+		const db = await DB.getInstance();
+
+		const envTypes = await db
+			.selectFrom("env_type")
+			.selectAll()
+			.where("app_id", "=", app_id)
+			.execute();
+
+		return envTypes;
+	}
+
+	public static getEnvCountByApp = async ({ app_id }: { app_id: string }) => {
+		const db = await DB.getInstance();
+
+		const count = await db
+			.selectFrom("env_store")
+			.select(db.fn.count<number>("id").as("count"))
+			.where("app_id", "=", app_id)
+			.executeTakeFirstOrThrow();
+
+		return count.count;
+	}
 }

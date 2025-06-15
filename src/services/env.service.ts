@@ -183,4 +183,43 @@ export class EnvService {
 				.executeTakeFirstOrThrow();
 		}
 	}
+
+	public static batchDeleteEnvs = async (
+		org_id: string,
+		app_id: string,
+		env_type_id: string,
+		keys: string[],
+	) => {
+		const db = await DB.getInstance();
+
+		await db
+			.deleteFrom("env_store")
+			.where("app_id", "=", app_id)
+			.where("org_id", "=", org_id)
+			.where("env_type_id", "=", env_type_id)
+			.where("key", "in", keys)
+			.executeTakeFirstOrThrow();
+	}
+
+	public static getAppEnvSummary = async ({
+		app_id,
+		org_id,
+	}: {
+		app_id: string;
+		org_id: string;
+	}) => {
+		const db = await DB.getInstance();
+
+		const summary = await db
+			.selectFrom("env_store")
+			.select([
+				"env_type_id",
+				db.fn.count("id").as("count"),
+			])
+			.where("app_id", "=", app_id)
+			.where("org_id", "=", org_id)
+			.execute();
+
+		return summary;
+	}
 }
