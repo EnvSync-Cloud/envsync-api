@@ -42,6 +42,20 @@ export const batchEnvsRequestSchema = z
 	})
 	.openapi({ ref: "BatchCreateEnvsRequest" });
 
+export const batchEnvsDeleteRequestSchema = z
+	.object({
+		app_id: z.string().openapi({ example: "app_123" }),
+		env_type_id: z.string().openapi({ example: "env_type_123" }),
+		keys: z.array(z.string().openapi({ example: "API_KEY" })),
+	})
+	.openapi({ ref: "BatchDeleteEnvsRequest" });
+
+export const batchEnvsResponseSchema = z
+	.object({
+		message: z.string().openapi({ example: "Environment variables updated successfully" }),
+	})
+	.openapi({ ref: "BatchEnvsResponse" });
+
 export const envResponseSchema = z
 	.object({
 		id: z.string().openapi({ example: "env_123" }),
