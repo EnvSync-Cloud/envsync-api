@@ -12,6 +12,8 @@ import {
 	batchEnvsRequestSchema,
 	envResponseSchema,
 	envsResponseSchema,
+	batchEnvsDeleteRequestSchema,
+	batchEnvsResponseSchema,
 } from "@/validators/env.validator";
 import { errorResponseSchema } from "@/validators/common";
 
@@ -121,7 +123,7 @@ app.put(
 				description: "Environment variables created successfully",
 				content: {
 					"application/json": {
-						schema: resolver(envsResponseSchema),
+						schema: resolver(batchEnvsResponseSchema),
 					},
 				},
 			},
@@ -211,7 +213,7 @@ app.patch(
 				description: "Environment variables updated successfully",
 				content: {
 					"application/json": {
-						schema: resolver(envsResponseSchema),
+						schema: resolver(batchEnvsResponseSchema),
 					},
 				},
 			},
@@ -227,6 +229,36 @@ app.patch(
 	}),
 	zValidator("json", batchEnvsRequestSchema),
 	EnvController.batchUpdateEnvs,
+);
+
+app.delete(
+	"/batch",
+	describeRoute({
+		operationId: "deleteBatchEnv",
+		summary: "Delete Environment Variables",
+		description: "Delete multiple environment variables in a single request",
+		tags: ["Environment Variables"],
+		responses: {
+			200: {
+				description: "Environment variables deleted successfully",
+				content: {
+					"application/json": {
+						schema: resolver(batchEnvsResponseSchema),
+					},
+				},
+			},
+			500: {
+				description: "Internal server error",
+				content: {
+					"application/json": {
+						schema: resolver(errorResponseSchema),
+					},
+				},
+			},
+		},
+	}),
+	zValidator("json", batchEnvsDeleteRequestSchema),
+	EnvController.batchDeleteEnvs,
 );
 
 export default app;
