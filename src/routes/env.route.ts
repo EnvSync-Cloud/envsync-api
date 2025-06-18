@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type Context, type Next } from "hono";
 import { describeRoute } from "hono-openapi";
 import { resolver, validator as zValidator } from "hono-openapi/zod";
 
@@ -235,7 +235,7 @@ app.delete(
 	"/batch",
 	describeRoute({
 		operationId: "deleteBatchEnv",
-		summary: "Delete Environment Variables",
+		summary: "Batch Delete Environment Variables",
 		description: "Delete multiple environment variables in a single request",
 		tags: ["Environment Variables"],
 		responses: {
