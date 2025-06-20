@@ -1,114 +1,223 @@
 <tr>
-	<td
-		style="
-			direction: ltr;
-			font-size: 0px;
-			padding: 20px 0px 20px 0px;
-			padding-bottom: 70px;
-			padding-top: 30px;
+	<td style="padding: 40px 50px 20px;">
+		<div style="
+			font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 			text-align: center;
-		"
-	>
-		<div
-			class="mj-column-per-100 mj-outlook-group-fix"
-			style="
-				font-size: 0px;
-				text-align: left;
-				direction: ltr;
+		">
+			<div style="
 				display: inline-block;
-				vertical-align: top;
-				width: 100%;
-			"
-		>
-			<table
-				border="0"
-				cellpadding="0"
-				cellspacing="0"
-				role="presentation"
-				style="vertical-align: top"
-				width="100%"
-			>
-				<tbody>
-					<tr>
-						<td
-							align="left"
-							style="
-								font-size: 0px;
-								padding: 0px 25px 0px 25px;
-								padding-top: 0px;
-								padding-right: 50px;
-								padding-bottom: 0px;
-								padding-left: 50px;
-								word-break: break-word;
-							"
-						>
-							<div
-								style="
-									font-family:
-										Open Sans,
-										Helvetica,
-										Arial,
-										sans-serif;
-									font-size: 13px;
-									line-height: 22px;
-									text-align: left;
-									color: #797e82;
-								"
-							>
-								<h1 style="text-align: center; color: #000000; line-height: 32px">
-									Welcome to EnvSync !!
-								</h1>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td
-							align="left"
-							style="
-								font-size: 0px;
-								padding: 0px 25px 0px 25px;
-								padding-top: 0px;
-								padding-right: 50px;
-								padding-bottom: 0px;
-								padding-left: 50px;
-								word-break: break-word;
-							"
-						>
-							<div
-								style="
-									font-family:
-										Open Sans,
-										Helvetica,
-										Arial,
-										sans-serif;
-									font-size: 13px;
-									line-height: 22px;
-									text-align: left;
-									color: #797e82;
-								"
-							>
-								<p style="margin: 10px 0; text-align: center">
-									We are happy to have you on board. To start your onboarding process, please click
-									the button below to accept the invitation and set up your account.
-								</p>
-								<p style="margin: 10px 0; text-align: center">
-									<a
-										href="{{ body.accept_link }}"
-										style="
-											background-color: #fcc603;
-											color: #ffffff;
-											padding: 10px 20px;
-											text-decoration: none;
-											border-radius: 5px;
-										"
-									>
+				background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+				border-radius: 50%;
+				padding: 20px;
+				margin-bottom: 24px;
+			">
+				<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</div>
+			
+			<h1 style="
+				font-size: 28px;
+				font-weight: 700;
+				color: #111827;
+				margin: 0 0 16px;
+				line-height: 1.2;
+				letter-spacing: -0.5px;
+			">
+				Welcome to EnvSync! 🎉
+			</h1>
+			
+			<p style="
+				font-size: 16px;
+				color: #6b7280;
+				margin: 0 0 32px;
+				line-height: 1.5;
+			">
+				We're excited to have you on board! Your organization account is ready to go.
+			</p>
+		</div>
+	</td>
+</tr>
+
+<tr>
+	<td style="padding: 0 50px 40px;">
+		<div style="
+			background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+			border-radius: 12px;
+			padding: 32px;
+			text-align: center;
+			border: 1px solid #e9ecef;
+		">
+			<h2 style="
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				font-size: 20px;
+				font-weight: 600;
+				color: #374151;
+				margin: 0 0 16px;
+			">
+				Get Started in Minutes
+			</h2>
+			
+			<p style="
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				font-size: 15px;
+				color: #6b7280;
+				margin: 0 0 24px;
+				line-height: 1.5;
+			">
+				Click the button below to accept your invitation and set up your organization. You'll be able to start syncing environments right away!
+			</p>
+			
+			<div style="margin: 32px 0;">
+				<a
+					href="{{ body.accept_link }}"
+					style="
+						display: inline-block;
+						background: linear-gradient(135deg, #1DB954 0%, #1ed760 100%);
+						color: #ffffff;
+						padding: 16px 32px;
+						text-decoration: none;
+						border-radius: 8px;
+						font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+						font-size: 16px;
+						font-weight: 600;
+						box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
+						transition: all 0.3s ease;
+					"
+				>
+					Accept Invitation & Get Started
+				</a>
+			</div>
+			
+			<p style="
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				font-size: 13px;
+				color: #9ca3af;
+				margin: 24px 0 0;
+			">
+				This invitation link will expire in 7 days
+			</p>
+		</div>
+	</td>
+</tr>
+
+<tr>
+	<td style="padding: 20px 50px 40px;">
+		<div style="text-align: center;">
+			<h3 style="
+				font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				font-size: 18px;
+				font-weight: 600;
+				color: #374151;
+				margin: 0 0 20px;
+			">
+				What's Next?
+			</h3>
+			
+			<table style="width: 100%; max-width: 400px; margin: 0 auto;" cellpadding="0" cellspacing="0">
+				<tr>
+					<td style="width: 33.33%; text-align: center; vertical-align: top; padding: 0 10px;">
+						<table style="width: 100%;" cellpadding="0" cellspacing="0">
+							<tr>
+								<td style="text-align: center;">
+									<div style="
+										background: #f0fdf4;
+										border-radius: 50%;
+										width: 48px;
+										height: 48px;
+										margin: 0 auto 12px;
+										text-align: center;
+										line-height: 48px;
+									">
+										<span style="
+											color: #1DB954; 
+											font-size: 20px; 
+											font-weight: bold;
+											font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										">1</span>
+									</div>
+									<p style="
+										font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										font-size: 12px;
+										color: #6b7280;
+										margin: 0;
+										font-weight: 500;
+									">
 										Accept Invitation
-									</a>
-								</p>
-							</div>
-						</td>
-					</tr>
-				</tbody>
+									</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+					
+					<td style="width: 33.33%; text-align: center; vertical-align: top; padding: 0 10px;">
+						<table style="width: 100%;" cellpadding="0" cellspacing="0">
+							<tr>
+								<td style="text-align: center;">
+									<div style="
+										background: #f0fdf4;
+										border-radius: 50%;
+										width: 48px;
+										height: 48px;
+										margin: 0 auto 12px;
+										text-align: center;
+										line-height: 48px;
+									">
+										<span style="
+											color: #1DB954; 
+											font-size: 20px; 
+											font-weight: bold;
+											font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										">2</span>
+									</div>
+									<p style="
+										font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										font-size: 12px;
+										color: #6b7280;
+										margin: 0;
+										font-weight: 500;
+									">
+										Setup Organization
+									</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+					
+					<td style="width: 33.33%; text-align: center; vertical-align: top; padding: 0 10px;">
+						<table style="width: 100%;" cellpadding="0" cellspacing="0">
+							<tr>
+								<td style="text-align: center;">
+									<div style="
+										background: #f0fdf4;
+										border-radius: 50%;
+										width: 48px;
+										height: 48px;
+										margin: 0 auto 12px;
+										text-align: center;
+										line-height: 48px;
+									">
+										<span style="
+											color: #1DB954; 
+											font-size: 20px; 
+											font-weight: bold;
+											font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										">3</span>
+									</div>
+									<p style="
+										font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+										font-size: 12px;
+										color: #6b7280;
+										margin: 0;
+										font-weight: 500;
+									">
+										Start Syncing
+									</p>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
 			</table>
 		</div>
 	</td>
