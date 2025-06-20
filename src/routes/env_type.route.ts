@@ -16,10 +16,12 @@ import {
 } from "@/validators/env_type.validator";
 import { errorResponseSchema } from "@/validators/common";
 import { validator as zValidator } from "hono-openapi/zod";
+import { cliMiddleware } from "@/middlewares/cli.middleware";
 
 const app = new Hono();
 
 app.use(authMiddleware());
+app.use(cliMiddleware());
 
 app.get(
 	"/",

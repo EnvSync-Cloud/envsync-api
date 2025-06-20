@@ -11,10 +11,12 @@ import {
 	updateRoleRequestSchema,
 } from "@/validators/user.validator";
 import { errorResponseSchema } from "@/validators/common";
+import { cliMiddleware } from "@/middlewares/cli.middleware";
 
 const app = new Hono();
 
 app.use(authMiddleware());
+app.use(cliMiddleware());
 
 app.get(
 	"/",
