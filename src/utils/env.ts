@@ -42,6 +42,8 @@ export const env = z.object({
 	AUTH0_CLI_CALLBACK_URL: z.string(),
 	AUTH0_WEB_CALLBACK_URL: z.string(),
 	AUTH0_API_REDIRECT_URI: z.string(),
+	// Landing page configuration
+	LANDING_PAGE_URL: z.string(),
 });
 
 export type Env = z.infer<typeof env>;
