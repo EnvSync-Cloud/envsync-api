@@ -6,10 +6,12 @@ import { authMiddleware } from "@/middlewares/auth.middleware";
 import { AuthController } from "@/controllers/auth.controller";
 import { whoAmIResponseSchema } from "@/validators/auth.validator";
 import { errorResponseSchema } from "@/validators/common";
+import { cliMiddleware } from "@/middlewares/cli.middleware";
 
 const app = new Hono();
 
 app.use(authMiddleware());
+app.use(cliMiddleware());
 
 app.get(
 	"/me",
