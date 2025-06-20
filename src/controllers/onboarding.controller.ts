@@ -2,13 +2,13 @@ import { type Context } from "hono";
 
 import { OrgService } from "@/services/org.service";
 import { RoleService } from "@/services/role.service";
-import { EnvTypeService } from "@/services/env_type.service";
 import { slugifyName } from "@/utils/random";
 import { UserService } from "@/services/user.service";
 import { InviteService } from "@/services/invite.service";
 import { onOrgOnboardingInvite, onUserOnboardingInvite } from "@/libs/mail";
 import { AuditLogService } from "@/services/audit_log.service";
 import { isPasswordStrong } from "@/utils/password";
+import { config } from "@/utils/env";
 
 export class OnboardingController {
 	public static readonly createOrgInvite = async (c: Context) => {
@@ -22,7 +22,7 @@ export class OnboardingController {
 			const invite_code = await InviteService.createOrgInvite(email);
 
 			await onOrgOnboardingInvite(email, {
-				accept_link: `https://envsync.cloud/onboarding/accept-org-invite/${invite_code}`,
+				accept_link: `${config.LANDING_PAGE_URL}/onboarding/accept-org-invite/${invite_code}`,
 			});
 
 			return c.json({ message: "Organization invite created successfully." }, 201);
@@ -144,7 +144,7 @@ export class OnboardingController {
 			const org = await OrgService.getOrg(org_id);
 
 			await onUserOnboardingInvite(email, {
-				accept_link: `https://envsync.cloud/onboarding/accept-user-invite/${invite.invite_token}`,
+				accept_link: `${config.LANDING_PAGE_URL}/onboarding/accept-user-invite/${invite.invite_token}`,
 				org_name: org.name,
 			});
 
