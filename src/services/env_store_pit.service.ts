@@ -174,8 +174,6 @@ export class EnvStorePiTService {
             .where("id", "=", env_store_pit_id)
             .executeTakeFirstOrThrow();
 
-        console.log(`Target PiT ID: ${env_store_pit_id}, Timestamp: ${targetPiT.created_at}`);
-
         // Get all PiT changes up to the target timestamp, ordered chronologically
         const allChanges = await db
             .selectFrom("env_store_pit")
@@ -197,8 +195,6 @@ export class EnvStorePiTService {
             .orderBy("env_store_pit.created_at", "asc")
             .orderBy("env_store_pit_change_request.created_at", "asc")
             .execute();
-
-        console.log(`Total changes found: ${allChanges.length}`);
 
         // Replay the changes to build the state at the target point in time
         const envState = new Map<string, { key: string; value: string; last_updated: Date }>();
