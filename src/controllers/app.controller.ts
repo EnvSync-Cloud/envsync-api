@@ -2,12 +2,21 @@ import { type Context } from "hono";
 
 import { AppService } from "@/services/app.service";
 import { AuditLogService } from "@/services/audit_log.service";
+import { generateKeyPair } from "@/helpers/key-store";
 
 export class AppController {
 	public static readonly createApp = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const { name, description, metadata } = await c.req.json();
+			let private_key = "";
+
+			let {
+				name,
+				description,
+				metadata,
+				enable_secrets = false,
+				public_key,
+			} = await c.req.json();
 			
 			const permissions = c.get("permissions");
 			
@@ -20,11 +29,21 @@ export class AppController {
 				return c.json({ error: "Name is required." }, 400);
 			}
 
+			if (enable_secrets && !public_key) {
+				const keypair = await generateKeyPair();
+				public_key = keypair.publicKey;
+				private_key = keypair.privateKey;
+			}
+
 			const app = await AppService.createApp({
 				name,
 				org_id,
 				description,
 				metadata: metadata || {},
+				enable_secrets,
+				is_managed_secret: !!private_key,
+				public_key,
+				private_key,
 			});
 
 			// Log the creation of the app
@@ -35,6 +54,8 @@ export class AppController {
 				details: {
 					app_id: app.id,
 					name: app.name,
+					enable_secrets: app.enable_secrets,
+					public_key: app.public_key,
 				},
 				message: `App ${app.name} created.`,
 			});

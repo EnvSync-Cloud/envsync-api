@@ -41,6 +41,44 @@ interface EnvStore extends BaseTable {
 	value: ColumnType<string>;
 }
 
+interface EnvStorePiT extends BaseTable {
+	change_request_message: ColumnType<string>;
+	org_id: ColumnType<string>;
+	env_type_id: ColumnType<string>;
+	user_id: ColumnType<string>;
+	app_id: ColumnType<string>;
+}
+
+interface EnvStorePiTChangeRequest extends BaseTable {
+	env_store_pit_id: ColumnType<string>;
+	key: ColumnType<string>;
+	value: ColumnType<string>;
+	operation: ColumnType<"CREATE" | "UPDATE" | "DELETE">;
+}
+
+interface SecretStore extends BaseTable {
+	org_id: ColumnType<string>;
+	env_type_id: ColumnType<string>;
+	app_id: ColumnType<string>;
+	key: ColumnType<string>;
+	value: ColumnType<string>;
+}
+
+interface SecretStorePiT extends BaseTable {
+	change_request_message: ColumnType<string>;
+	org_id: ColumnType<string>;
+	env_type_id: ColumnType<string>;
+	user_id: ColumnType<string>;
+	app_id: ColumnType<string>;
+}
+
+interface SecretStorePiTChangeRequest extends BaseTable {
+	secret_store_pit_id: ColumnType<string>;
+	key: ColumnType<string>;
+	value: ColumnType<string>;
+	operation: ColumnType<"CREATE" | "UPDATE" | "DELETE">;
+}
+
 interface AuditLog extends BaseTable {
 	org_id: ColumnType<string>;
 	user_id: ColumnType<string>;
@@ -53,6 +91,10 @@ interface App extends BaseTable {
 	name: ColumnType<string>;
 	org_id: ColumnType<string>;
 	description: ColumnType<string>;
+	enable_secrets: ColumnType<boolean>;
+	is_managed_secret: ColumnType<boolean>;
+	public_key?: ColumnType<string | null>;
+	private_key?: ColumnType<string | null>;
 	metadata: ColumnType<Record<string, any>>;
 }
 
@@ -112,4 +154,9 @@ export interface Database {
 	orgs: Orgs;
 	settings: Settings;
 	api_keys: ApiKeys;
+	env_store_pit: EnvStorePiT;
+	env_store_pit_change_request: EnvStorePiTChangeRequest;
+	secret_store: SecretStore;
+	secret_store_pit: SecretStorePiT;
+	secret_store_pit_change_request: SecretStorePiTChangeRequest;
 }

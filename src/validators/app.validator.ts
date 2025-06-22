@@ -5,6 +5,11 @@ export const createAppRequestBodySchema = z
 	.object({
 		name: z.string().openapi({ example: "My Application" }),
 		description: z.string().openapi({ example: "Description of my application" }),
+		enable_secrets: z.boolean().optional().openapi({ example: false }),
+		public_key: z
+			.string()
+			.optional()
+			.openapi({ example: "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----" }),
 		metadata: z
 			.record(z.any())
 			.optional()
@@ -25,6 +30,12 @@ export const getAppResponseSchema = z
 		name: z.string().openapi({ example: "My Application" }),
 		description: z.string().openapi({ example: "Description of my application" }),
 		metadata: z.record(z.any()).openapi({ example: { key: "value" } }),
+		enable_secrets: z.boolean().openapi({ example: false }),
+		is_managed_secret: z.boolean().openapi({ example: false }),
+		public_key: z
+			.string()
+			.optional()
+			.openapi({ example: "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----" }),
 		org_id: z.string().openapi({ example: "org_123" }),
 		envCount: z.number().openapi({ example: 5 }),
 		env_types: z
@@ -49,6 +60,12 @@ export const getAppsResponseSchema = z
 			id: z.string().openapi({ example: "app_123" }),
 			name: z.string().openapi({ example: "My Application" }),
 			description: z.string().openapi({ example: "Description of my application" }),
+			enable_secrets: z.boolean().openapi({ example: false }),
+			is_managed_secret: z.boolean().openapi({ example: false }),
+			public_key: z
+				.string()
+				.optional()
+				.openapi({ example: "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----" }),
 			metadata: z.record(z.any()).openapi({ example: { key: "value" } }),
 			org_id: z.string().openapi({ example: "org_123" }),
 			envCount: z.number().openapi({ example: 5 }),

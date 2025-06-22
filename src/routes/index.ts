@@ -9,6 +9,7 @@ import envTypeRoute from "./env_type.route";
 import envRoute from "./env.route";
 import onboardingRoute from "./onboarding.route";
 import orgRoute from "./org.route";
+import secretRoute from "./secret.route";
 import uploadRoute from "./upload.route";
 import userRoute from "./user.route";
 import roleRoute from "./role.route";
@@ -25,6 +26,7 @@ app.route("/env", envRoute);
 app.route("/role", roleRoute);
 app.route("/onboarding", onboardingRoute);
 app.route("/org", orgRoute);
+app.route("/secret", secretRoute);
 app.route("/upload", uploadRoute);
 app.route("/user", userRoute);
 
