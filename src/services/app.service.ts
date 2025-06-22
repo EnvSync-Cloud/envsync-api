@@ -8,11 +8,19 @@ export class AppService {
 		org_id,
 		description,
 		metadata,
+		enable_secrets,
+		is_managed_secret,
+		public_key,
+		private_key,
 	}: {
 		name: string;
 		org_id: string;
 		description: string;
 		metadata: Record<string, any>;
+		enable_secrets: boolean;
+		is_managed_secret: boolean;
+		public_key?: string;
+		private_key?: string;
 	}) => {
 		const db = await DB.getInstance();
 
@@ -26,8 +34,23 @@ export class AppService {
 				metadata,
 				created_at: new Date(),
 				updated_at: new Date(),
+				enable_secrets,
+				is_managed_secret,
+				public_key,
+				private_key,
 			})
-			.returningAll()
+			.returning([
+				'id',
+				"name",
+				"description",
+				"org_id",
+				"enable_secrets",
+				"is_managed_secret",
+				"public_key",
+				"metadata",
+				"created_at",
+				"updated_at"
+			])
 			.executeTakeFirstOrThrow();
 
 		return app;
@@ -38,7 +61,18 @@ export class AppService {
 
 		const app = await db
 			.selectFrom("app")
-			.selectAll()
+			.select([
+				'id',
+				"name",
+				"description",
+				"org_id",
+				"enable_secrets",
+				"is_managed_secret",
+				"public_key",
+				"metadata",
+				"created_at",
+				"updated_at"
+			])
 			.where("id", "=", id)
 			.executeTakeFirstOrThrow();
 
@@ -74,7 +108,21 @@ export class AppService {
 	public static getAllApps = async (org_id: string) => {
 		const db = await DB.getInstance();
 
-		const apps = await db.selectFrom("app").selectAll().where("org_id", "=", org_id).execute();
+		const apps = await db.selectFrom("app")
+			.select([
+				'id',
+				"name",
+				"description",
+				"org_id",
+				"enable_secrets",
+				"is_managed_secret",
+				"public_key",
+				"metadata",
+				"created_at",
+				"updated_at"
+			])
+			.where("org_id", "=", org_id)
+			.execute();
 
 		return apps;
 	};
@@ -101,5 +149,34 @@ export class AppService {
 			.executeTakeFirstOrThrow();
 
 		return count.count;
+	}
+
+	public static getSecretCountByApp = async ({ app_id }: { app_id: string }) => {
+		const db = await DB.getInstance();
+
+		const count = await db
+			.selectFrom("secret_store")
+			.select(db.fn.count<number>("id").as("count"))
+			.where("app_id", "=", app_id)
+			.executeTakeFirstOrThrow();
+
+		return count.count;
+	}
+
+	public static getManagedAppPrivateKey = async (app_id: string) => {
+		const db = await DB.getInstance();
+
+		const secret = await db
+			.selectFrom("app")
+			.select("private_key")
+			.where("is_managed_secret", "=", true)
+			.where("id", "=", app_id)
+			.executeTakeFirst();
+
+		if (!secret) {
+			throw new Error("Managed app private key not found");
+		}
+
+		return secret.private_key;
 	}
 }
