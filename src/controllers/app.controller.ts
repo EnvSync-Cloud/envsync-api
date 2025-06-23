@@ -10,16 +10,10 @@ export class AppController {
 			const org_id = c.get("org_id");
 			let private_key = "";
 
-			let {
-				name,
-				description,
-				metadata,
-				enable_secrets = false,
-				public_key,
-			} = await c.req.json();
-			
+			let { name, description, metadata, enable_secrets = false, public_key } = await c.req.json();
+
 			const permissions = c.get("permissions");
-			
+
 			// Apps can only be created by admins or masters in the organization
 			if (!permissions.is_admin || !permissions.is_master) {
 				return c.json({ error: "You do not have permission to create apps." }, 403);
@@ -62,7 +56,6 @@ export class AppController {
 
 			return c.json(app, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -100,9 +93,8 @@ export class AppController {
 				app_id: app.id,
 			});
 
-			return c.json({app, env_types, envCount});
+			return c.json({ app, env_types, envCount });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -132,7 +124,7 @@ export class AppController {
 			// Return the list of apps
 			// This could be optimized to include env_types in the response
 			const appsWithEnvTypes = await Promise.all(
-				apps.map(async (app) => {
+				apps.map(async app => {
 					const env_types = await AppService.getAppEnvTypes({
 						app_id: app.id,
 					});
@@ -141,12 +133,11 @@ export class AppController {
 						app_id: app.id,
 					});
 					return { ...app, env_types, envCount };
-				})
+				}),
 			);
 
 			return c.json(appsWithEnvTypes);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -162,7 +153,7 @@ export class AppController {
 			const { name, description, metadata } = await c.req.json();
 
 			const permissions = c.get("permissions");
-			
+
 			// Apps can only be update by admins or masters
 			if (!permissions.is_admin || !permissions.is_master) {
 				return c.json({ error: "You do not have permission to update apps." }, 403);
@@ -194,7 +185,6 @@ export class AppController {
 
 			return c.json({ message: "App updated successfully" });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -210,7 +200,7 @@ export class AppController {
 			const app = await AppService.getApp({ id });
 
 			const permissions = c.get("permissions");
-			
+
 			// Apps can only be delete by admins or masters in the organization
 			if (!permissions.is_admin || !permissions.is_master) {
 				return c.json({ error: "You do not have permission to delete apps." }, 403);
@@ -236,7 +226,6 @@ export class AppController {
 
 			return c.json({ message: "App deleted successfully" });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

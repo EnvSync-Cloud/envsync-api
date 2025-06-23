@@ -22,7 +22,6 @@ export class EnvTypeController {
 
 			return c.json(env_types);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -32,19 +31,20 @@ export class EnvTypeController {
 	public static readonly createEnvType = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
-			const {
-				name,
-				app_id,
-				color,
-				is_default,
-				is_protected
-			} = await c.req.json();
+			const { name, app_id, color, is_default, is_protected } = await c.req.json();
 
 			if (!name) {
 				return c.json({ error: "Name is required." }, 400);
 			}
 
-			const env_type = await EnvTypeService.createEnvType({ org_id, name, app_id, color, is_default, is_protected });
+			const env_type = await EnvTypeService.createEnvType({
+				org_id,
+				name,
+				app_id,
+				color,
+				is_default,
+				is_protected,
+			});
 
 			// Log the creation of the environment type
 			await AuditLogService.notifyAuditSystem({
@@ -60,7 +60,6 @@ export class EnvTypeController {
 
 			return c.json(env_type, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -102,7 +101,6 @@ export class EnvTypeController {
 
 			return c.json({ message: "Env type updated successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -142,7 +140,6 @@ export class EnvTypeController {
 
 			return c.json({ message: "Env type deleted successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -181,7 +178,6 @@ export class EnvTypeController {
 
 			return c.json(envType);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

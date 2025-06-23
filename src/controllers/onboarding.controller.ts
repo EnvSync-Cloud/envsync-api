@@ -27,7 +27,6 @@ export class OnboardingController {
 
 			return c.json({ message: "Organization invite created successfully." }, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -48,7 +47,13 @@ export class OnboardingController {
 			}
 
 			if (!isPasswordStrong(password)) {
-				return c.json({ error: "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character." }, 400);
+				return c.json(
+					{
+						error:
+							"Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.",
+					},
+					400,
+				);
 			}
 
 			const invite_data = await InviteService.getOrgInviteByCode(invite_code);
@@ -98,7 +103,6 @@ export class OnboardingController {
 
 			return c.json({ message: "Organization created successfully." }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -117,7 +121,6 @@ export class OnboardingController {
 
 			return c.json({ invite }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -163,7 +166,6 @@ export class OnboardingController {
 
 			return c.json({ message: "User invite created successfully." }, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -181,7 +183,13 @@ export class OnboardingController {
 			}
 
 			if (!isPasswordStrong(password)) {
-				return c.json({ error: "Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character." }, 400);
+				return c.json(
+					{
+						error:
+							"Password must be at least 8 characters long and contain uppercase, lowercase, number, and special character.",
+					},
+					400,
+				);
 			}
 
 			// Check if the invite code is valid and not already accepted
@@ -222,7 +230,6 @@ export class OnboardingController {
 
 			return c.json({ message: "User invite accepted successfully." }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -241,7 +248,6 @@ export class OnboardingController {
 
 			return c.json({ invite }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -291,7 +297,6 @@ export class OnboardingController {
 
 			return c.json({ message: "User invite updated successfully." }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -333,7 +338,6 @@ export class OnboardingController {
 
 			return c.json({ message: "User invite deleted successfully." }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -366,10 +370,9 @@ export class OnboardingController {
 
 			return c.json({ invites }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
 		}
-	}
+	};
 }

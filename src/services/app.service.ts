@@ -40,7 +40,7 @@ export class AppService {
 				private_key,
 			})
 			.returning([
-				'id',
+				"id",
 				"name",
 				"description",
 				"org_id",
@@ -49,7 +49,7 @@ export class AppService {
 				"public_key",
 				"metadata",
 				"created_at",
-				"updated_at"
+				"updated_at",
 			])
 			.executeTakeFirstOrThrow();
 
@@ -62,7 +62,7 @@ export class AppService {
 		const app = await db
 			.selectFrom("app")
 			.select([
-				'id',
+				"id",
 				"name",
 				"description",
 				"org_id",
@@ -71,7 +71,7 @@ export class AppService {
 				"public_key",
 				"metadata",
 				"created_at",
-				"updated_at"
+				"updated_at",
 			])
 			.where("id", "=", id)
 			.executeTakeFirstOrThrow();
@@ -108,9 +108,10 @@ export class AppService {
 	public static getAllApps = async (org_id: string) => {
 		const db = await DB.getInstance();
 
-		const apps = await db.selectFrom("app")
+		const apps = await db
+			.selectFrom("app")
 			.select([
-				'id',
+				"id",
 				"name",
 				"description",
 				"org_id",
@@ -119,7 +120,7 @@ export class AppService {
 				"public_key",
 				"metadata",
 				"created_at",
-				"updated_at"
+				"updated_at",
 			])
 			.where("org_id", "=", org_id)
 			.execute();
@@ -137,7 +138,7 @@ export class AppService {
 			.execute();
 
 		return envTypes;
-	}
+	};
 
 	public static getEnvCountByApp = async ({ app_id }: { app_id: string }) => {
 		const db = await DB.getInstance();
@@ -149,7 +150,7 @@ export class AppService {
 			.executeTakeFirstOrThrow();
 
 		return count.count;
-	}
+	};
 
 	public static getSecretCountByApp = async ({ app_id }: { app_id: string }) => {
 		const db = await DB.getInstance();
@@ -161,7 +162,7 @@ export class AppService {
 			.executeTakeFirstOrThrow();
 
 		return count.count;
-	}
+	};
 
 	public static getManagedAppPrivateKey = async (app_id: string) => {
 		const db = await DB.getInstance();
@@ -178,5 +179,5 @@ export class AppService {
 		}
 
 		return secret.private_key;
-	}
+	};
 }

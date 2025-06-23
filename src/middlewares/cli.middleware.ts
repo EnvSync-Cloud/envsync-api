@@ -28,7 +28,6 @@ export const cliMiddleware = (): MiddlewareHandler => {
 
 			await next();
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return ctx.json({ error: err.message }, 401);
 			}

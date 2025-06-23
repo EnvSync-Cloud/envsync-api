@@ -13,7 +13,7 @@ export class RoleService {
 		have_webhook_access,
 		is_admin,
 		is_master,
-		color
+		color,
 	}: {
 		name: string;
 		org_id: string;
@@ -141,11 +141,7 @@ export class RoleService {
 	public static getRoles = async (org_id: string) => {
 		const db = await DB.getInstance();
 
-		const role = await db
-			.selectFrom("org_role")
-			.selectAll()
-			.where("org_id", "=", org_id)
-			.execute();
+		const role = await db.selectFrom("org_role").selectAll().where("org_id", "=", org_id).execute();
 
 		return role;
 	};
@@ -167,8 +163,8 @@ export class RoleService {
 			view_access_count: stats.filter(role => role.can_view).length,
 			edit_access_count: stats.filter(role => role.can_edit).length,
 			total_roles: stats.length,
-		}
-	}
+		};
+	};
 
 	public static updateRole = async (
 		id: string,
@@ -220,11 +216,18 @@ export class RoleService {
 		}
 
 		await db.deleteFrom("org_role").where("id", "=", id).executeTakeFirstOrThrow();
-	}
+	};
 
 	public static checkPermission = async (
 		role_id: string,
-		permission: "can_edit" | "can_view" | "have_api_access" | "have_billing_options" | "have_webhook_access" | "is_admin" | "is_master",
+		permission:
+			| "can_edit"
+			| "can_view"
+			| "have_api_access"
+			| "have_billing_options"
+			| "have_webhook_access"
+			| "is_admin"
+			| "is_master",
 	) => {
 		const db = await DB.getInstance();
 
@@ -245,12 +248,12 @@ export class RoleService {
 		if (role.is_admin && permission !== "is_master") {
 			return true; // Admin role has all permissions except is_master
 		}
-		
+
 		// Check if the permission exists on the role
 		if (role[permission] === undefined) {
 			throw new Error(`Permission ${permission} does not exist on role`);
 		}
 
 		return role[permission];
-	}
+	};
 }

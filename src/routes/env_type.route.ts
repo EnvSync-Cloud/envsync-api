@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import {
 	resolver,
-	// validator as zValidator 
+	// validator as zValidator
 } from "hono-openapi/zod";
 
 import { authMiddleware } from "@/middlewares/auth.middleware";

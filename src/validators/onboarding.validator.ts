@@ -119,7 +119,7 @@ export const getAllUserInvitesResponseSchema = z
 				invite_token: z.string().openapi({ example: "INVITE_TOKEN" }),
 				is_accepted: z.boolean().openapi({ example: false }),
 				role_id: z.string().openapi({ example: "ROLE_ID" }),
-			})
+			}),
 		),
 	})
 	.openapi({ ref: "GetAllUserInvitesResponse" });

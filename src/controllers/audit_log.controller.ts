@@ -9,7 +9,7 @@ export class AuditLogController {
 			const user_id = c.get("user_id");
 
 			const permissions = c.get("permissions");
-			
+
 			// Audit logs can only be accessed by admins or masters in the organization
 			if (!permissions.is_admin || !permissions.is_master) {
 				return c.json({ error: "You do not have permission to access audit logs." }, 403);
@@ -36,7 +36,6 @@ export class AuditLogController {
 
 			return c.json(auditLogs);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

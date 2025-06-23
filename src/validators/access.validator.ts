@@ -14,7 +14,10 @@ export const loginUrlResponseSchema = z
 export const cliLoginResponseSchema = z
 	.object({
 		message: z.string().openapi({ example: "CLI login created successfully." }),
-		verification_uri_complete: z.string().url().openapi({ example: "https://auth0.com/device/authorize" }),
+		verification_uri_complete: z
+			.string()
+			.url()
+			.openapi({ example: "https://auth0.com/device/authorize" }),
 		user_code: z.string().openapi({ example: "abc123" }),
 		device_code: z.string().openapi({ example: "def456" }),
 		expires_in: z.number().openapi({ example: 300 }),

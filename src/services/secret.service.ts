@@ -2,6 +2,8 @@ import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
 
+import { KeyValidationService } from "./key_validation.service";
+
 export class SecretService {
 	public static createSecret = async ({
 		key,
@@ -16,6 +18,19 @@ export class SecretService {
 		app_id: string;
 		org_id: string;
 	}) => {
+		// Validate key doesn't exist as environment variable
+		const keyCheck = await KeyValidationService.checkKeyExists({
+			key,
+			app_id,
+			env_type_id,
+			org_id,
+			excludeTable: "secret_store", // Don't check secret_store since we're creating in it
+		});
+
+		if (keyCheck.exists) {
+			throw new Error(keyCheck.message!);
+		}
+
 		const db = await DB.getInstance();
 
 		const { id } = await db
@@ -142,6 +157,21 @@ export class SecretService {
 			value: string;
 		}[],
 	) => {
+		// Validate all keys don't exist as environment variables
+		const keys = envs.map(env => env.key);
+		const conflicts = await KeyValidationService.validateKeys({
+			keys,
+			app_id,
+			env_type_id,
+			org_id,
+			excludeTable: "secret_store",
+		});
+
+		if (conflicts.length > 0) {
+			const conflictMessages = conflicts.map(c => c.message).join(", ");
+			throw new Error(`Key conflicts found: ${conflictMessages}`);
+		}
+
 		const db = await DB.getInstance();
 
 		const envInserts = envs.map(env => ({
@@ -182,7 +212,7 @@ export class SecretService {
 				.where("env_type_id", "=", env_type_id)
 				.executeTakeFirstOrThrow();
 		}
-	}
+	};
 
 	public static batchDeleteSecrets = async (
 		org_id: string,
@@ -199,7 +229,7 @@ export class SecretService {
 			.where("env_type_id", "=", env_type_id)
 			.where("key", "in", keys)
 			.executeTakeFirstOrThrow();
-	}
+	};
 
 	public static getAppSecretSummary = async ({
 		app_id,
@@ -212,14 +242,11 @@ export class SecretService {
 
 		const summary = await db
 			.selectFrom("secret_store")
-			.select([
-				"env_type_id",
-				db.fn.count("id").as("count"),
-			])
+			.select(["env_type_id", db.fn.count("id").as("count")])
 			.where("app_id", "=", app_id)
 			.where("org_id", "=", org_id)
 			.execute();
 
 		return summary;
-	}
+	};
 }

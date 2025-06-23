@@ -24,7 +24,6 @@ export class UserController {
 
 			return c.json(users);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -63,7 +62,6 @@ export class UserController {
 
 			return c.json(user);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -130,7 +128,6 @@ export class UserController {
 
 			return c.json({ message: "User updated successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -179,7 +176,6 @@ export class UserController {
 
 			return c.json({ message: "User deleted successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -231,7 +227,6 @@ export class UserController {
 
 			return c.json({ message: "User role updated successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -277,7 +272,6 @@ export class UserController {
 
 			return c.json({ message: "Password updation request sent!" });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

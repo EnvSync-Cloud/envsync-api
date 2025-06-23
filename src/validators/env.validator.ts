@@ -121,7 +121,10 @@ export const rollbackToPitRequestSchema = z
 		app_id: z.string().openapi({ example: "app_123" }),
 		env_type_id: z.string().openapi({ example: "env_type_123" }),
 		pit_id: z.string().openapi({ example: "pit_123" }),
-		rollback_message: z.string().optional().openapi({ example: "Rollback due to configuration error" }),
+		rollback_message: z
+			.string()
+			.optional()
+			.openapi({ example: "Rollback due to configuration error" }),
 	})
 	.openapi({ ref: "RollbackToPitRequest" });
 
@@ -139,7 +142,10 @@ export const variableRollbackToPitRequestSchema = z
 		app_id: z.string().openapi({ example: "app_123" }),
 		env_type_id: z.string().openapi({ example: "env_type_123" }),
 		pit_id: z.string().openapi({ example: "pit_123" }),
-		rollback_message: z.string().optional().openapi({ example: "Rollback DATABASE_URL due to connection issues" }),
+		rollback_message: z
+			.string()
+			.optional()
+			.openapi({ example: "Rollback DATABASE_URL due to connection issues" }),
 	})
 	.openapi({ ref: "VariableRollbackToPitRequest" });
 
@@ -148,73 +154,90 @@ export const variableRollbackToTimestampRequestSchema = z
 		app_id: z.string().openapi({ example: "app_123" }),
 		env_type_id: z.string().openapi({ example: "env_type_123" }),
 		timestamp: z.string().datetime().openapi({ example: "2024-01-01T10:00:00Z" }),
-		rollback_message: z.string().optional().openapi({ example: "Restore API_KEY to working version" }),
+		rollback_message: z
+			.string()
+			.optional()
+			.openapi({ example: "Restore API_KEY to working version" }),
 	})
 	.openapi({ ref: "VariableRollbackToTimestampRequest" });
 
 // Response schemas
 export const envHistoryResponseSchema = z
 	.object({
-		pits: z.array(z.object({
-			id: z.string().openapi({ example: "pit_123" }),
-			org_id: z.string().openapi({ example: "org_123" }),
-			app_id: z.string().openapi({ example: "app_123" }),
-			env_type_id: z.string().openapi({ example: "env_type_123" }),
-			change_request_message: z.string().openapi({ example: "Updated DATABASE_URL" }),
-			user_id: z.string().openapi({ example: "user_123" }),
-			created_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
-			updated_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
-		})),
+		pits: z.array(
+			z.object({
+				id: z.string().openapi({ example: "pit_123" }),
+				org_id: z.string().openapi({ example: "org_123" }),
+				app_id: z.string().openapi({ example: "app_123" }),
+				env_type_id: z.string().openapi({ example: "env_type_123" }),
+				change_request_message: z.string().openapi({ example: "Updated DATABASE_URL" }),
+				user_id: z.string().openapi({ example: "user_123" }),
+				created_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
+				updated_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
+			}),
+		),
 		totalPages: z.number().int().openapi({ example: 5 }),
 	})
 	.openapi({ ref: "EnvHistoryResponse" });
 
 export const envPitStateResponseSchema = z
-	.array(z.object({
-		key: z.string().openapi({ example: "DATABASE_URL" }),
-		value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
-		last_updated: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
-	}))
+	.array(
+		z.object({
+			key: z.string().openapi({ example: "DATABASE_URL" }),
+			value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
+			last_updated: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
+		}),
+	)
 	.openapi({ ref: "EnvPitStateResponse" });
 
 export const envDiffResponseSchema = z
 	.object({
-		added: z.array(z.object({
-			key: z.string().openapi({ example: "NEW_VAR" }),
-			value: z.string().openapi({ example: "new_value" }),
-		})),
-		modified: z.array(z.object({
-			key: z.string().openapi({ example: "DATABASE_URL" }),
-			old_value: z.string().openapi({ example: "old_connection" }),
-			new_value: z.string().openapi({ example: "new_connection" }),
-		})),
-		deleted: z.array(z.object({
-			key: z.string().openapi({ example: "REMOVED_VAR" }),
-			value: z.string().openapi({ example: "removed_value" }),
-		})),
+		added: z.array(
+			z.object({
+				key: z.string().openapi({ example: "NEW_VAR" }),
+				value: z.string().openapi({ example: "new_value" }),
+			}),
+		),
+		modified: z.array(
+			z.object({
+				key: z.string().openapi({ example: "DATABASE_URL" }),
+				old_value: z.string().openapi({ example: "old_connection" }),
+				new_value: z.string().openapi({ example: "new_connection" }),
+			}),
+		),
+		deleted: z.array(
+			z.object({
+				key: z.string().openapi({ example: "REMOVED_VAR" }),
+				value: z.string().openapi({ example: "removed_value" }),
+			}),
+		),
 	})
 	.openapi({ ref: "EnvDiffResponse" });
 
 export const variableTimelineResponseSchema = z
-	.array(z.object({
-		pit_id: z.string().openapi({ example: "pit_123" }),
-		change_request_message: z.string().openapi({ example: "Updated DATABASE_URL" }),
-		user_id: z.string().openapi({ example: "user_123" }),
-		created_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
-		value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
-		operation: z.enum(['CREATE', 'UPDATE', 'DELETE']).openapi({ example: "UPDATE" }),
-	}))
+	.array(
+		z.object({
+			pit_id: z.string().openapi({ example: "pit_123" }),
+			change_request_message: z.string().openapi({ example: "Updated DATABASE_URL" }),
+			user_id: z.string().openapi({ example: "user_123" }),
+			created_at: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
+			value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
+			operation: z.enum(["CREATE", "UPDATE", "DELETE"]).openapi({ example: "UPDATE" }),
+		}),
+	)
 	.openapi({ ref: "VariableTimelineResponse" });
 
 export const rollbackResponseSchema = z
 	.object({
 		message: z.string().openapi({ example: "Rollback completed successfully" }),
 		operations_performed: z.number().int().openapi({ example: 3 }),
-		operations: z.array(z.object({
-			key: z.string().openapi({ example: "DATABASE_URL" }),
-			value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
-			operation: z.enum(['CREATE', 'UPDATE', 'DELETE']).openapi({ example: "UPDATE" }),
-		})),
+		operations: z.array(
+			z.object({
+				key: z.string().openapi({ example: "DATABASE_URL" }),
+				value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
+				operation: z.enum(["CREATE", "UPDATE", "DELETE"]).openapi({ example: "UPDATE" }),
+			}),
+		),
 	})
 	.openapi({ ref: "RollbackResponse" });
 
@@ -222,7 +245,7 @@ export const variableRollbackResponseSchema = z
 	.object({
 		message: z.string().openapi({ example: "Variable rollback completed successfully" }),
 		key: z.string().openapi({ example: "DATABASE_URL" }),
-		operation: z.enum(['CREATE', 'UPDATE', 'DELETE']).openapi({ example: "UPDATE" }),
+		operation: z.enum(["CREATE", "UPDATE", "DELETE"]).openapi({ example: "UPDATE" }),
 		previous_value: z.string().nullable().openapi({ example: "old_value" }),
 		target_value: z.string().nullable().openapi({ example: "new_value" }),
 		pit_id: z.string().optional().openapi({ example: "pit_123" }),
