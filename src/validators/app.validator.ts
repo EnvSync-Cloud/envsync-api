@@ -48,7 +48,17 @@ export const getAppResponseSchema = z
 					color: z.string().openapi({ example: "#ff0000" }),
 				}),
 			)
-			.openapi({ example: [{ id: "env_type_123", name: "Production", is_default: true, is_protected: false, color: "#ff0000" }] }),
+			.openapi({
+				example: [
+					{
+						id: "env_type_123",
+						name: "Production",
+						is_default: true,
+						is_protected: false,
+						color: "#ff0000",
+					},
+				],
+			}),
 		created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 		updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 	})
@@ -79,7 +89,17 @@ export const getAppsResponseSchema = z
 						color: z.string().openapi({ example: "#ff0000" }),
 					}),
 				)
-				.openapi({ example: [{ id: "env_type_123", name: "Production", is_default: true, is_protected: false, color: "#ff0000" }] }),
+				.openapi({
+					example: [
+						{
+							id: "env_type_123",
+							name: "Production",
+							is_default: true,
+							is_protected: false,
+							color: "#ff0000",
+						},
+					],
+				}),
 			created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 			updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 		}),

@@ -1,7 +1,6 @@
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { showRoutes } from "hono/dev";
 import { logger } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
 import { prettyJSON } from "hono/pretty-json";
@@ -95,7 +94,11 @@ app.get("/version", ctx => {
 	});
 });
 
-showRoutes(app);
+const apiRoutes = app.routes;
+log("API Routes:", LogTypes.LOGS, "Entrypoint");
+apiRoutes.forEach(route => {
+	log(`Method: ${route.method}, Path: ${route.path}`, LogTypes.LOGS, "Entrypoint");
+});
 
 log(`Server started at http://localhost:${config.PORT}`, LogTypes.LOGS, "Entrypoint");
 

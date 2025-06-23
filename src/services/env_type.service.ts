@@ -9,9 +9,14 @@ export class EnvTypeService {
 		app_id,
 		color,
 		is_default,
-		is_protected
+		is_protected,
 	}: {
-		name: string; org_id: string; app_id: string; color: string; is_default: boolean; is_protected: boolean;
+		name: string;
+		org_id: string;
+		app_id: string;
+		color: string;
+		is_default: boolean;
+		is_protected: boolean;
 	}) => {
 		const db = await DB.getInstance();
 

@@ -11,7 +11,6 @@ export class OrgController {
 			const org = await OrgService.getOrg(org_id);
 			return c.json(org);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -29,7 +28,6 @@ export class OrgController {
 			const exists = await OrgService.checkIfSlugExists(slug);
 			return c.json({ exists });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -84,7 +82,6 @@ export class OrgController {
 
 			return c.json({ message: "Organization updated successfully." });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

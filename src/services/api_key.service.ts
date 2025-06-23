@@ -135,5 +135,5 @@ export class ApiKeyService {
 			})
 			.where("id", "=", id)
 			.execute();
-	}
+	};
 }

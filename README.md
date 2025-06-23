@@ -10,8 +10,9 @@ The REST API backend for [EnvSync Cloud](https://envsync.cloud) - seamlessly syn
 EnvSync keeps your `.env` files, configuration secrets, and environment variables perfectly synchronized across development, staging, and production environments.
 
 **Key Benefits:**
+
 - 🔒 **Secure** - End-to-end encryption for sensitive data
-- ⚡ **Fast** - Real-time synchronization across environments  
+- ⚡ **Fast** - Real-time synchronization across environments
 - 🌐 **Web-first** - Built for modern web development workflows
 - 🔧 **Developer-friendly** - RESTful API with comprehensive documentation
 
@@ -36,6 +37,7 @@ Interactive API documentation is available at: **[https://api.envsync.cloud/docs
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - [Bun](https://bun.sh/) - JavaScript runtime and package manager
 - [Docker](https://docker.com/) - For running services locally
 - [PostgreSQL](https://postgresql.org/) - Database
@@ -122,6 +124,7 @@ docker-compose up -d
 ```
 
 This will start:
+
 - 🐘 PostgreSQL database
 - 🔴 Redis cache
 - 📧 Local email service (optional)
@@ -170,22 +173,22 @@ envsync-api/
 
 ### Required Environment Variables
 
-| Category | Variable | Description |
-|----------|----------|-------------|
-| **App** | `NODE_ENV` | Environment mode |
-| **App** | `PORT` | Server port |
-| **Database** | `DATABASE_HOST` | PostgreSQL host |
-| **Database** | `DATABASE_PORT` | PostgreSQL port |
-| **Database** | `DATABASE_USER` | Database username |
-| **Database** | `DATABASE_PASSWORD` | Database password |
-| **Database** | `DATABASE_NAME` | Database name |
-| **S3** | `S3_BUCKET` | AWS S3 bucket name |
-| **S3** | `S3_ACCESS_KEY` | AWS access key |
-| **S3** | `S3_SECRET_KEY` | AWS secret key |
-| **Redis** | `REDIS_URL` | Redis connection URL |
-| **Auth0** | `AUTH0_DOMAIN` | Auth0 domain |
-| **Auth0** | `AUTH0_CLIENT_ID` | Auth0 client ID |
-| **SES** | `SES_FROM_EMAIL` | Email sender address |
+| Category     | Variable            | Description          |
+| ------------ | ------------------- | -------------------- |
+| **App**      | `NODE_ENV`          | Environment mode     |
+| **App**      | `PORT`              | Server port          |
+| **Database** | `DATABASE_HOST`     | PostgreSQL host      |
+| **Database** | `DATABASE_PORT`     | PostgreSQL port      |
+| **Database** | `DATABASE_USER`     | Database username    |
+| **Database** | `DATABASE_PASSWORD` | Database password    |
+| **Database** | `DATABASE_NAME`     | Database name        |
+| **S3**       | `S3_BUCKET`         | AWS S3 bucket name   |
+| **S3**       | `S3_ACCESS_KEY`     | AWS access key       |
+| **S3**       | `S3_SECRET_KEY`     | AWS secret key       |
+| **Redis**    | `REDIS_URL`         | Redis connection URL |
+| **Auth0**    | `AUTH0_DOMAIN`      | Auth0 domain         |
+| **Auth0**    | `AUTH0_CLIENT_ID`   | Auth0 client ID      |
+| **SES**      | `SES_FROM_EMAIL`    | Email sender address |
 
 ## 🐳 Docker Deployment
 
@@ -213,7 +216,7 @@ This API uses **Auth0** for authentication and authorization:
 
 ## 🤝 Contributing
 
-We're building the future of environment management! 
+We're building the future of environment management!
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)

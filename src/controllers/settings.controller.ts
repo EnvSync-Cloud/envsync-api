@@ -15,7 +15,6 @@ export class SettingsController {
 
 			return c.json(settings, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -35,7 +34,6 @@ export class SettingsController {
 
 			return c.json({ message: "User settings updated successfully." }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

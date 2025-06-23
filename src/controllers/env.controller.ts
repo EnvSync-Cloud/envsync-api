@@ -10,13 +10,13 @@ export class EnvController {
 		try {
 			const org_id = c.get("org_id");
 			const user_id = c.get("user_id");
-			
+
 			const { key, value, app_id, env_type_id } = await c.req.json();
-			
+
 			if (!key || !org_id || !app_id || !env_type_id) {
 				return c.json({ error: "key, org_id, app_id, and env_type_id are required." }, 400);
 			}
-			
+
 			const permissions = c.get("permissions");
 
 			// env_type_id
@@ -59,11 +59,13 @@ export class EnvController {
 				env_type_id,
 				change_request_message: `Created environment variable: ${key}`,
 				user_id,
-				envs: [{
-					key,
-					value: value || "",
-					operation: 'CREATE'
-				}]
+				envs: [
+					{
+						key,
+						value: value || "",
+						operation: "CREATE",
+					},
+				],
 			});
 
 			// Log the creation of the environment variable
@@ -82,8 +84,14 @@ export class EnvController {
 
 			return c.json(env, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
+				if (
+					err.message.includes("already exists as a secret") ||
+					err.message.includes("already exists as an environment variable")
+				) {
+					return c.json({ error: err.message }, 409);
+				}
+
 				return c.json({ error: err.message }, 500);
 			}
 		}
@@ -101,7 +109,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -142,11 +150,13 @@ export class EnvController {
 				env_type_id,
 				change_request_message: `Updated environment variable: ${key} (${currentEnv.value} → ${value || ""})`,
 				user_id,
-				envs: [{
-					key,
-					value: value || "",
-					operation: 'UPDATE'
-				}]
+				envs: [
+					{
+						key,
+						value: value || "",
+						operation: "UPDATE",
+					},
+				],
 			});
 
 			// Log the update of the environment variable
@@ -166,7 +176,6 @@ export class EnvController {
 
 			return c.json({ message: "Env updated successfully" });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -184,7 +193,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -224,11 +233,13 @@ export class EnvController {
 				env_type_id,
 				change_request_message: `Deleted environment variable: ${key} (value: ${currentEnv.value})`,
 				user_id,
-				envs: [{
-					key,
-					value: currentEnv.value,
-					operation: 'DELETE'
-				}]
+				envs: [
+					{
+						key,
+						value: currentEnv.value,
+						operation: "DELETE",
+					},
+				],
 			});
 
 			// Log the deletion of the environment variable
@@ -247,7 +258,6 @@ export class EnvController {
 
 			return c.json({ message: "Env deleted successfully" });
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -266,7 +276,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -302,7 +312,6 @@ export class EnvController {
 
 			return c.json(env);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -320,7 +329,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -354,7 +363,6 @@ export class EnvController {
 
 			return c.json(envs);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -372,7 +380,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -393,8 +401,8 @@ export class EnvController {
 				envs: envs.map(env => ({
 					key: env.key,
 					value: env.value,
-					operation: 'CREATE' as const
-				}))
+					operation: "CREATE" as const,
+				})),
 			});
 
 			// Log the batch creation of environment variables
@@ -413,10 +421,14 @@ export class EnvController {
 
 			return c.json({ message: "Envs created successfully" }, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
-				return c.json({ error: err
-.message }, 500);
+				if (
+					err.message.includes("already exists as a secret") ||
+					err.message.includes("already exists as an environment variable")
+				) {
+					return c.json({ error: err.message }, 409);
+				}
+				return c.json({ error: err.message }, 500);
 			}
 		}
 	};
@@ -432,7 +444,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -443,14 +455,14 @@ export class EnvController {
 
 			// Get current values for tracking changes
 			const currentEnvs = await Promise.all(
-				envs.map(env => 
+				envs.map(env =>
 					EnvService.getEnv({
 						key: env.key,
 						org_id,
 						app_id,
 						env_type_id,
-					})
-				)
+					}),
+				),
 			);
 
 			await EnvService.batchUpdateEnvs(org_id, app_id, env_type_id, envs);
@@ -458,7 +470,7 @@ export class EnvController {
 			// Create detailed change message
 			const changes = envs.map((env, index) => {
 				const currentEnv = currentEnvs[index];
-				return `${env.key}: ${currentEnv?.value || 'undefined'} → ${env.value}`;
+				return `${env.key}: ${currentEnv?.value || "undefined"} → ${env.value}`;
 			});
 
 			// Create Point-in-Time record for batch update
@@ -471,8 +483,8 @@ export class EnvController {
 				envs: envs.map(env => ({
 					key: env.key,
 					value: env.value,
-					operation: 'UPDATE' as const
-				}))
+					operation: "UPDATE" as const,
+				})),
 			});
 
 			// Log the batch update of environment variables
@@ -492,7 +504,6 @@ export class EnvController {
 
 			return c.json({ message: "Envs updated successfully" }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -510,7 +521,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// env_type_id
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 
@@ -521,14 +532,14 @@ export class EnvController {
 
 			// Get current values for tracking deletions
 			const currentEnvs = await Promise.all(
-				keys.map(key => 
+				keys.map(key =>
 					EnvService.getEnv({
 						key,
 						org_id,
 						app_id,
 						env_type_id,
-					})
-				)
+					}),
+				),
 			);
 
 			await EnvService.batchDeleteEnvs(org_id, app_id, env_type_id, keys);
@@ -539,7 +550,7 @@ export class EnvController {
 				.map(env => ({
 					key: env!.key,
 					value: env!.value,
-					operation: 'DELETE' as const
+					operation: "DELETE" as const,
 				}));
 
 			if (deletedEnvs.length > 0) {
@@ -549,7 +560,7 @@ export class EnvController {
 					env_type_id,
 					change_request_message: `Batch deleted ${deletedEnvs.length} environment variables: ${deletedEnvs.map(env => `${env.key} (${env.value})`).join(", ")}`,
 					user_id,
-					envs: deletedEnvs
+					envs: deletedEnvs,
 				});
 			}
 
@@ -563,13 +574,14 @@ export class EnvController {
 					app_id,
 					env_type_id,
 					keys,
-					deleted_values: currentEnvs.filter(env => env).map(env => ({ key: env!.key, value: env!.value })),
+					deleted_values: currentEnvs
+						.filter(env => env)
+						.map(env => ({ key: env!.key, value: env!.value })),
 				},
 			});
 
 			return c.json({ message: "Envs deleted successfully" }, 200);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -587,7 +599,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check permissions
 			if (!permissions.can_view) {
 				return c.json({ error: "You do not have permission to view env history." }, 403);
@@ -603,7 +615,6 @@ export class EnvController {
 
 			return c.json(history);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -638,7 +649,6 @@ export class EnvController {
 
 			return c.json(envs);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -655,7 +665,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check permissions
 			if (!permissions.can_view) {
 				return c.json({ error: "You do not have permission to view envs." }, 403);
@@ -670,7 +680,6 @@ export class EnvController {
 
 			return c.json(envs);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -683,11 +692,14 @@ export class EnvController {
 			const { app_id, env_type_id, from_pit_id, to_pit_id } = await c.req.json();
 
 			if (!org_id || !app_id || !env_type_id || !from_pit_id || !to_pit_id) {
-				return c.json({ error: "org_id, app_id, env_type_id, from_pit_id, and to_pit_id are required." }, 400);
+				return c.json(
+					{ error: "org_id, app_id, env_type_id, from_pit_id, and to_pit_id are required." },
+					400,
+				);
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check permissions
 			if (!permissions.can_view) {
 				return c.json({ error: "You do not have permission to view env diffs." }, 403);
@@ -703,7 +715,6 @@ export class EnvController {
 
 			return c.json(diff);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -721,7 +732,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check permissions
 			if (!permissions.can_view) {
 				return c.json({ error: "You do not have permission to view variable timeline." }, 403);
@@ -737,14 +748,13 @@ export class EnvController {
 
 			return c.json(timeline);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
 		}
 	};
 
-		public static readonly rollbackEnvsToPitId = async (c: Context) => {
+	public static readonly rollbackEnvsToPitId = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
 			const user_id = c.get("user_id");
@@ -755,7 +765,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check env type permissions
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 			if (env_type.is_protected && (!permissions.is_admin || !permissions.is_master)) {
@@ -800,7 +810,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'DELETE' as const
+						operation: "DELETE" as const,
 					});
 				}
 			}
@@ -819,7 +829,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'CREATE' as const
+						operation: "CREATE" as const,
 					});
 				} else if (currentMap.get(key) !== value) {
 					// Update existing variable
@@ -833,7 +843,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'UPDATE' as const
+						operation: "UPDATE" as const,
 					});
 				}
 			}
@@ -844,9 +854,11 @@ export class EnvController {
 					org_id,
 					app_id,
 					env_type_id,
-					change_request_message: rollback_message || `Rollback to PiT ${pit_id}: ${rollbackOperations.length} variables affected`,
+					change_request_message:
+						rollback_message ||
+						`Rollback to PiT ${pit_id}: ${rollbackOperations.length} variables affected`,
 					user_id,
-					envs: rollbackOperations
+					envs: rollbackOperations,
 				});
 
 				// Log the rollback operation
@@ -865,13 +877,12 @@ export class EnvController {
 				});
 			}
 
-			return c.json({ 
+			return c.json({
 				message: "Rollback completed successfully",
 				operations_performed: rollbackOperations.length,
-				operations: rollbackOperations
+				operations: rollbackOperations,
 			});
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -889,7 +900,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check env type permissions
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 			if (env_type.is_protected && (!permissions.is_admin || !permissions.is_master)) {
@@ -940,7 +951,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'DELETE' as const
+						operation: "DELETE" as const,
 					});
 				}
 			}
@@ -959,7 +970,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'CREATE' as const
+						operation: "CREATE" as const,
 					});
 				} else if (currentMap.get(key) !== value) {
 					// Update existing variable
@@ -973,7 +984,7 @@ export class EnvController {
 					rollbackOperations.push({
 						key,
 						value,
-						operation: 'UPDATE' as const
+						operation: "UPDATE" as const,
 					});
 				}
 			}
@@ -984,9 +995,11 @@ export class EnvController {
 					org_id,
 					app_id,
 					env_type_id,
-					change_request_message: rollback_message || `Rollback to timestamp ${targetTimestamp.toISOString()}: ${rollbackOperations.length} variables affected`,
+					change_request_message:
+						rollback_message ||
+						`Rollback to timestamp ${targetTimestamp.toISOString()}: ${rollbackOperations.length} variables affected`,
 					user_id,
-					envs: rollbackOperations
+					envs: rollbackOperations,
 				});
 
 				// Log the rollback operation
@@ -1005,21 +1018,20 @@ export class EnvController {
 				});
 			}
 
-			return c.json({ 
+			return c.json({
 				message: "Rollback completed successfully",
 				target_timestamp: targetTimestamp.toISOString(),
 				operations_performed: rollbackOperations.length,
-				operations: rollbackOperations
+				operations: rollbackOperations,
 			});
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
 		}
 	};
 
-		public static readonly rollbackVariableToPitId = async (c: Context) => {
+	public static readonly rollbackVariableToPitId = async (c: Context) => {
 		try {
 			const org_id = c.get("org_id");
 			const user_id = c.get("user_id");
@@ -1031,7 +1043,7 @@ export class EnvController {
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check env type permissions
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 			if (env_type.is_protected && (!permissions.is_admin || !permissions.is_master)) {
@@ -1074,9 +1086,9 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: currentEnv.value,
-					operation: 'DELETE' as const,
+					operation: "DELETE" as const,
 					previous_value: currentEnv.value,
-					target_value: null
+					target_value: null,
 				};
 			} else if (targetEnv && !currentEnv) {
 				// Variable didn't exist now but existed at target PiT - CREATE it
@@ -1090,9 +1102,9 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: targetEnv.value,
-					operation: 'CREATE' as const,
+					operation: "CREATE" as const,
 					previous_value: null,
-					target_value: targetEnv.value
+					target_value: targetEnv.value,
 				};
 			} else if (targetEnv && currentEnv && targetEnv.value !== currentEnv.value) {
 				// Variable exists in both but values differ - UPDATE it
@@ -1106,17 +1118,17 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: targetEnv.value,
-					operation: 'UPDATE' as const,
+					operation: "UPDATE" as const,
 					previous_value: currentEnv.value,
-					target_value: targetEnv.value
+					target_value: targetEnv.value,
 				};
 			} else {
 				// No changes needed
-				return c.json({ 
+				return c.json({
 					message: "No rollback needed - variable is already at target state",
 					key,
 					current_value: currentEnv?.value || null,
-					target_value: targetEnv?.value || null
+					target_value: targetEnv?.value || null,
 				});
 			}
 
@@ -1125,13 +1137,17 @@ export class EnvController {
 				org_id,
 				app_id,
 				env_type_id,
-				change_request_message: rollback_message || `Rollback variable ${key} to PiT ${pit_id}: ${rollbackOperation.previous_value} → ${rollbackOperation.target_value}`,
+				change_request_message:
+					rollback_message ||
+					`Rollback variable ${key} to PiT ${pit_id}: ${rollbackOperation.previous_value} → ${rollbackOperation.target_value}`,
 				user_id,
-				envs: [{
-					key: rollbackOperation.key,
-					value: rollbackOperation.value,
-					operation: rollbackOperation.operation
-				}]
+				envs: [
+					{
+						key: rollbackOperation.key,
+						value: rollbackOperation.value,
+						operation: rollbackOperation.operation,
+					},
+				],
 			});
 
 			// Log the rollback operation
@@ -1151,16 +1167,15 @@ export class EnvController {
 				},
 			});
 
-			return c.json({ 
+			return c.json({
 				message: "Variable rollback completed successfully",
 				key,
 				operation: rollbackOperation.operation,
 				previous_value: rollbackOperation.previous_value,
 				target_value: rollbackOperation.target_value,
-				pit_id
+				pit_id,
 			});
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -1175,11 +1190,14 @@ export class EnvController {
 			const { app_id, env_type_id, timestamp, rollback_message } = await c.req.json();
 
 			if (!org_id || !app_id || !env_type_id || !timestamp || !key) {
-				return c.json({ error: "org_id, app_id, env_type_id, timestamp, and key are required." }, 400);
+				return c.json(
+					{ error: "org_id, app_id, env_type_id, timestamp, and key are required." },
+					400,
+				);
 			}
 
 			const permissions = c.get("permissions");
-			
+
 			// Check env type permissions
 			const env_type = await EnvTypeService.getEnvType(env_type_id);
 			if (env_type.is_protected && (!permissions.is_admin || !permissions.is_master)) {
@@ -1228,9 +1246,9 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: currentEnv.value,
-					operation: 'DELETE' as const,
+					operation: "DELETE" as const,
 					previous_value: currentEnv.value,
-					target_value: null
+					target_value: null,
 				};
 			} else if (targetEnv && !currentEnv) {
 				// Variable didn't exist now but existed at target timestamp - CREATE it
@@ -1244,9 +1262,9 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: targetEnv.value,
-					operation: 'CREATE' as const,
+					operation: "CREATE" as const,
 					previous_value: null,
-					target_value: targetEnv.value
+					target_value: targetEnv.value,
 				};
 			} else if (targetEnv && currentEnv && targetEnv.value !== currentEnv.value) {
 				// Variable exists in both but values differ - UPDATE it
@@ -1260,18 +1278,18 @@ export class EnvController {
 				rollbackOperation = {
 					key,
 					value: targetEnv.value,
-					operation: 'UPDATE' as const,
+					operation: "UPDATE" as const,
 					previous_value: currentEnv.value,
-					target_value: targetEnv.value
+					target_value: targetEnv.value,
 				};
 			} else {
 				// No changes needed
-				return c.json({ 
+				return c.json({
 					message: "No rollback needed - variable is already at target state",
 					key,
 					current_value: currentEnv?.value || null,
 					target_value: targetEnv?.value || null,
-					target_timestamp: targetTimestamp.toISOString()
+					target_timestamp: targetTimestamp.toISOString(),
 				});
 			}
 
@@ -1280,13 +1298,17 @@ export class EnvController {
 				org_id,
 				app_id,
 				env_type_id,
-				change_request_message: rollback_message || `Rollback variable ${key} to ${targetTimestamp.toISOString()}: ${rollbackOperation.previous_value} → ${rollbackOperation.target_value}`,
+				change_request_message:
+					rollback_message ||
+					`Rollback variable ${key} to ${targetTimestamp.toISOString()}: ${rollbackOperation.previous_value} → ${rollbackOperation.target_value}`,
 				user_id,
-				envs: [{
-					key: rollbackOperation.key,
-					value: rollbackOperation.value,
-					operation: rollbackOperation.operation
-				}]
+				envs: [
+					{
+						key: rollbackOperation.key,
+						value: rollbackOperation.value,
+						operation: rollbackOperation.operation,
+					},
+				],
 			});
 
 			// Log the rollback operation
@@ -1306,16 +1328,15 @@ export class EnvController {
 				},
 			});
 
-			return c.json({ 
+			return c.json({
 				message: "Variable rollback completed successfully",
 				key,
 				operation: rollbackOperation.operation,
 				previous_value: rollbackOperation.previous_value,
 				target_value: rollbackOperation.target_value,
-				target_timestamp: targetTimestamp.toISOString()
+				target_timestamp: targetTimestamp.toISOString(),
 			});
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}

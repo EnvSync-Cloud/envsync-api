@@ -128,7 +128,7 @@ app.put(
 		},
 	}),
 	zValidator("json", createSecretRequestSchema),
-	SecretController.createSecretWithPiT,
+	SecretController.createSecret,
 );
 
 app.put(
@@ -158,7 +158,7 @@ app.put(
 		},
 	}),
 	zValidator("json", batchSecretsRequestSchema),
-	SecretController.batchCreateSecretsWithPiT,
+	SecretController.batchCreateSecrets,
 );
 
 app.delete(
@@ -188,7 +188,7 @@ app.delete(
 		},
 	}),
 	zValidator("json", deleteSecretRequestSchema),
-	SecretController.deleteSecretWithPiT,
+	SecretController.deleteSecret,
 );
 
 app.patch(
@@ -218,7 +218,7 @@ app.patch(
 		},
 	}),
 	zValidator("json", updateSecretRequestSchema),
-	SecretController.updateSecretWithPiT,
+	SecretController.updateSecret,
 );
 
 app.patch(
@@ -248,7 +248,7 @@ app.patch(
 		},
 	}),
 	zValidator("json", batchSecretsRequestSchema),
-	SecretController.batchUpdateSecretsWithPiT,
+	SecretController.batchUpdateSecrets,
 );
 
 app.delete(
@@ -278,7 +278,7 @@ app.delete(
 		},
 	}),
 	zValidator("json", batchSecretsDeleteRequestSchema),
-	SecretController.batchDeleteSecretsWithPiT,
+	SecretController.batchDeleteSecrets,
 );
 
 app.post(

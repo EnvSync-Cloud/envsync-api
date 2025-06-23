@@ -29,6 +29,6 @@ export const whoAmIResponseSchema = z
 			created_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 			updated_at: z.string().openapi({ example: "2023-01-01T00:00:00Z" }),
 		}),
-		role: roleResponseSchema
+		role: roleResponseSchema,
 	})
 	.openapi({ ref: "WhoAmIResponse" });

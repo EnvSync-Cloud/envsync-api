@@ -33,7 +33,6 @@ export class AccessController {
 				201,
 			);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -48,7 +47,6 @@ export class AccessController {
 
 			return c.json({ message: "Web login created successfully.", loginUrl }, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -81,7 +79,6 @@ export class AccessController {
 
 			return c.redirect(AUTH0_WEB_CALLBACK_URL + `?access_token=${tokenData.id_token}`, 302);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -96,7 +93,6 @@ export class AccessController {
 
 			return c.json({ message: "API login created successfully.", loginUrl }, 201);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
@@ -130,7 +126,6 @@ export class AccessController {
 				200,
 			);
 		} catch (err) {
-			console.error(err);
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
 			}
