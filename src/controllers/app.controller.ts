@@ -93,7 +93,11 @@ export class AppController {
 				app_id: app.id,
 			});
 
-			return c.json({ app, env_types, envCount });
+			const secretCount = await AppService.getSecretCountByApp({
+				app_id: app.id,
+			});
+
+			return c.json({ app, env_types, envCount, secretCount });
 		} catch (err) {
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
@@ -128,11 +132,18 @@ export class AppController {
 					const env_types = await AppService.getAppEnvTypes({
 						app_id: app.id,
 					});
+					
 					// Optionally, you can also get the environment count for each app
 					const envCount = await AppService.getEnvCountByApp({
 						app_id: app.id,
 					});
-					return { ...app, env_types, envCount };
+
+					// Optionally, you can also get the secret count for each app
+					const secretCount = await AppService.getSecretCountByApp({
+						app_id: app.id,
+					});
+
+					return { ...app, env_types, envCount, secretCount };
 				}),
 			);
 

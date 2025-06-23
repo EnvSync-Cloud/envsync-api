@@ -38,6 +38,7 @@ export const getAppResponseSchema = z
 			.openapi({ example: "-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----" }),
 		org_id: z.string().openapi({ example: "org_123" }),
 		envCount: z.number().openapi({ example: 5 }),
+		secretCount: z.number().openapi({ example: 10 }),
 		env_types: z
 			.array(
 				z.object({
@@ -79,6 +80,7 @@ export const getAppsResponseSchema = z
 			metadata: z.record(z.any()).openapi({ example: { key: "value" } }),
 			org_id: z.string().openapi({ example: "org_123" }),
 			envCount: z.number().openapi({ example: 5 }),
+			secretCount: z.number().openapi({ example: 10 }),
 			env_types: z
 				.array(
 					z.object({
