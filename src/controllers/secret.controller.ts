@@ -92,7 +92,7 @@ export class SecretController {
 
 			// Log the creation of the secret
 			await AuditLogService.notifyAuditSystem({
-				action: "secret_created_with_pit",
+				action: "secret_created",
 				org_id,
 				user_id,
 				message: `Secret ${key} created with PiT tracking in app ${app_id} for environment type ${env_type_id}.`,
@@ -203,7 +203,7 @@ export class SecretController {
 
 			// Log the update of the secret
 			await AuditLogService.notifyAuditSystem({
-				action: "secret_updated_with_pit",
+				action: "secret_updated",
 				org_id,
 				user_id,
 				message: `Secret ${key} updated with PiT tracking in app ${app_id} for environment type ${env_type_id}.`,
@@ -288,7 +288,7 @@ export class SecretController {
 
 			// Log the deletion of the secret
 			await AuditLogService.notifyAuditSystem({
-				action: "secret_deleted_with_pit",
+				action: "secret_deleted",
 				org_id,
 				user_id,
 				message: `Secret ${key} deleted with PiT tracking from app ${app_id} for environment type ${env_type_id}.`,
@@ -396,7 +396,7 @@ export class SecretController {
 
 			// Log the batch creation of secrets
 			await AuditLogService.notifyAuditSystem({
-				action: "secrets_batch_created_with_pit",
+				action: "secrets_batch_created",
 				org_id,
 				user_id,
 				message: `Batch creation of ${modEnvs.length} secrets with PiT tracking in app ${app_id} for environment type ${env_type_id} for keys: ${modEnvs.map(env => env.key).join(", ")}.`,
@@ -517,7 +517,7 @@ export class SecretController {
 
 			// Log the batch update of secrets
 			await AuditLogService.notifyAuditSystem({
-				action: "secrets_batch_updated_with_pit",
+				action: "secrets_batch_updated",
 				org_id,
 				user_id,
 				message: `Batch update of ${modEnvs.length} secrets with PiT tracking in app ${app_id} for environment type ${env_type_id} for keys: ${modEnvs.map(env => env.key).join(", ")}.`,
@@ -607,7 +607,7 @@ export class SecretController {
 
 			// Log the batch deletion of secrets
 			await AuditLogService.notifyAuditSystem({
-				action: "secrets_batch_deleted_with_pit",
+				action: "secrets_batch_deleted",
 				org_id,
 				user_id,
 				message: `Batch deletion of ${secretsToDelete.length} secrets with PiT tracking in app ${app_id} for environment type ${env_type_id} for keys: ${keys.join(", ")}.`,

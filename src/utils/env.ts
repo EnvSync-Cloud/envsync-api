@@ -44,6 +44,7 @@ export const env = z.object({
 	AUTH0_API_REDIRECT_URI: z.string(),
 	// Landing page configuration
 	LANDING_PAGE_URL: z.string(),
+	DASHBOARD_URL: z.string().default("http://localhost:8080"),
 });
 
 export type Env = z.infer<typeof env>;
