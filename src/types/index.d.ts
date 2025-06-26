@@ -82,6 +82,14 @@ type ApiKeyAuditActions =
 	| "apikey_updated"
 	| "apikey_regenerated";
 
+type WebHookAuditActions =
+	| "webhook_created"
+	| "webhook_updated"
+	| "webhook_deleted"
+	| "webhook_viewed"
+	| "webhooks_viewed"
+	| "webhook_triggered";
+
 type CliAuditActions = "cli_command_executed";
 
 type AuditActions =
@@ -95,4 +103,5 @@ type AuditActions =
 	| OrgAuditActions
 	| SecretStoreAuditActions
 	| UserAuditActions
+	| WebHookAuditActions
 	| CliAuditActions;

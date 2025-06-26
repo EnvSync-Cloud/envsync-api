@@ -18,7 +18,16 @@ const urlSetMap = {
 };
 
 export class WebhookService {
-    public static createWebhook = async (
+    public static createWebhook = async ({
+        event_types,
+        linked_to = "org",
+        name,
+        org_id,
+        user_id,
+        url,
+        webhook_type,
+        app_id
+    }: {
         name: string,
         org_id: string,
         user_id: string,
@@ -26,8 +35,8 @@ export class WebhookService {
         event_types: AuditActions[],
         webhook_type: "DISCORD" | "SLACK" | "CUSTOM",
         app_id?: string,
-        linked_to: "org" | "app" = "org"
-    ): Promise<string> => {
+        linked_to: "org" | "app"
+    }): Promise<string> => {
         const id = uuidv4();
         const db = await DB.getInstance();
 
