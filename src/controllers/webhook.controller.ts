@@ -15,7 +15,7 @@ export class WebhookController {
             const permissions = c.get("permissions");
 
             // Webhooks can only be created by admins or masters in the organization
-            if (!permissions.is_admin || !permissions.is_master || !permissions.have_webhook_access) {
+            if (!(permissions.is_admin || permissions.is_master) || !permissions.have_webhook_access) {
                 return c.json({ error: "You do not have permission to create webhooks." }, 403);
             }
 
