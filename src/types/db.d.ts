@@ -82,7 +82,7 @@ interface SecretStorePiTChangeRequest extends BaseTable {
 interface AuditLog extends BaseTable {
 	org_id: ColumnType<string>;
 	user_id: ColumnType<string>;
-	action: ColumnType<string>;
+	action: ColumnType<AuditActions>;
 	details: ColumnType<string>;
 	message: ColumnType<string>;
 }
@@ -142,6 +142,19 @@ interface ApiKeys extends BaseTable {
 	last_used_at?: ColumnType<Date | null>;
 }
 
+interface WebhookStore extends BaseTable {
+	name: ColumnType<string>;
+	org_id: ColumnType<string>;
+	user_id: ColumnType<string>;
+	url: ColumnType<string>;
+	event_types: ColumnType<string[]>;
+	is_active: ColumnType<boolean>;
+	webhook_type: ColumnType<"CUSTOM" | "DISCORD" | "SLACK">
+	app_id?: ColumnType<string | null>;
+	linked_to: ColumnType<"org" | "app">;
+	last_triggered_at?: ColumnType<Date | null>;
+}
+
 export interface Database {
 	invite_org: InviteOrg;
 	invite_user: InviteUser;
@@ -159,4 +172,5 @@ export interface Database {
 	secret_store: SecretStore;
 	secret_store_pit: SecretStorePiT;
 	secret_store_pit_change_request: SecretStorePiTChangeRequest;
+	webhook_store: WebhookStore;
 }

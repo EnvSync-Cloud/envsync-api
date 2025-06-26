@@ -14,6 +14,16 @@ export class RoleController {
 
 			const roles = await RoleService.getRoles(org_id);
 
+			await AuditLogService.notifyAuditSystem({
+				action: "roles_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				details: {
+					roles_count: roles.length,
+				},
+				message: "Roles retrieved successfully.",
+			});
+
 			return c.json(roles, 200);
 		} catch (err) {
 			if (err instanceof Error) {
@@ -190,6 +200,18 @@ export class RoleController {
 			if (role.org_id !== org_id) {
 				return c.json({ error: "Role not found in this organization." }, 404);
 			}
+
+			// Log the retrieval of the role
+			await AuditLogService.notifyAuditSystem({
+				action: "role_viewed",	
+				org_id,
+				user_id: c.get("user_id"),
+				message: `Role with ID ${id} viewed.`,
+				details: {
+					role_id: id,
+					role_name: role.name,
+				},
+			});
 
 			return c.json(role, 200);
 		} catch (err) {

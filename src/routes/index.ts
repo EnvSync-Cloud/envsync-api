@@ -13,6 +13,7 @@ import secretRoute from "./secret.route";
 import uploadRoute from "./upload.route";
 import userRoute from "./user.route";
 import roleRoute from "./role.route";
+import webhookRoute from "./webhook.route";
 
 const app = new Hono();
 
@@ -29,5 +30,6 @@ app.route("/org", orgRoute);
 app.route("/secret", secretRoute);
 app.route("/upload", uploadRoute);
 app.route("/user", userRoute);
+app.route("/webhook", webhookRoute);
 
 export default app;

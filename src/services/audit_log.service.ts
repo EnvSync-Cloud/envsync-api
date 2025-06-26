@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 
 import { DB } from "@/libs/db";
-
 export class AuditLogService {
 	public static notifyAuditSystem = async ({
 		action,
@@ -11,7 +10,7 @@ export class AuditLogService {
 		message,
 	}: {
 		details: Record<string, any>;
-		action: string;
+		action: AuditActions;
 		org_id: string;
 		user_id: string;
 		message: string;

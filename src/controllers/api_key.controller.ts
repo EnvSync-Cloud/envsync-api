@@ -2,6 +2,7 @@ import { type Context } from "hono";
 
 import { ApiKeyService } from "@/services/api_key.service";
 import { encapsulate } from "@/utils/encapsulate";
+import { AuditLogService } from "@/services/audit_log.service";
 
 export class ApiKeyController {
 	public static readonly createApiKey = async (c: Context) => {
@@ -26,6 +27,17 @@ export class ApiKeyController {
 				org_id,
 				description,
 				user_id,
+			});
+
+			await AuditLogService.notifyAuditSystem({
+				action: "apikey_created",
+				org_id,
+				user_id: c.get("user_id"),
+				message: `API Key created: ${name}`,
+				details: {
+					api_key_id: apiKey.id,
+					name
+				},
 			});
 
 			return c.json(apiKey, 201);
@@ -55,6 +67,16 @@ export class ApiKeyController {
 
 			apiKey.key = encapsulate(apiKey.key);
 
+			await AuditLogService.notifyAuditSystem({
+				action: "apikey_viewed",
+				org_id: c.get("org_id"),
+				user_id: c.get("user_id"),
+				message: `API Key viewed: ${apiKey.key}`,
+				details: {
+					api_key_id: apiKey.id,
+				},
+			});
+
 			return c.json(apiKey, 200);
 		} catch (err) {
 			if (err instanceof Error) {
@@ -82,6 +104,16 @@ export class ApiKeyController {
 
 			apiKeys.forEach(key => {
 				key.key = encapsulate(key.key);
+			});
+
+			await AuditLogService.notifyAuditSystem({
+				action: "apikeys_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				message: "All API Keys viewed",
+				details: {
+					count: apiKeys.length,
+				},
 			});
 
 			return c.json(apiKeys, 200);
@@ -114,6 +146,19 @@ export class ApiKeyController {
 				last_used_at,
 			});
 
+			await AuditLogService.notifyAuditSystem({
+				action: "apikey_updated",
+				org_id: c.get("org_id"),
+				user_id: c.get("user_id"),
+				message: `API Key updated: ${id}`,
+				details: {
+					api_key_id: id,
+					description,
+					is_active,
+					last_used_at,
+				},
+			});
+
 			return c.json({ message: "API Key updated successfully." }, 200);
 		} catch (err) {
 			if (err instanceof Error) {
@@ -138,6 +183,16 @@ export class ApiKeyController {
 			}
 
 			await ApiKeyService.deleteKey(id);
+
+			await AuditLogService.notifyAuditSystem({
+				action: "apikey_deleted",
+				org_id: c.get("org_id"),
+				user_id: c.get("user_id"),
+				message: `API Key deleted: ${id}`,
+				details: {
+					api_key_id: id,
+				},
+			});
 
 			return c.json({ message: "API Key deleted successfully." }, 200);
 		} catch (err) {
@@ -172,6 +227,17 @@ export class ApiKeyController {
 				key.key = encapsulate(key.key);
 			});
 
+			await AuditLogService.notifyAuditSystem({
+				action: "apikeys_viewed",
+				org_id: c.get("org_id"),
+				user_id: c.get("user_id"),
+				message: `API Keys viewed for user: ${userId}`,
+				details: {
+					count: keys.length,
+					user_id: userId,
+				},
+			});
+
 			return c.json(keys, 200);
 		} catch (err) {
 			if (err instanceof Error) {
@@ -197,6 +263,20 @@ export class ApiKeyController {
 
 			const newKey = await ApiKeyService.regenerateKey(id);
 
+			if (!newKey) {
+				return c.json({ error: "Failed to regenerate API Key." }, 500);
+			}
+
+			await AuditLogService.notifyAuditSystem({
+				action: "apikey_regenerated",
+				org_id: c.get("org_id"),
+				user_id: c.get("user_id"),
+				message: `API Key regenerated: ${id}`,
+				details: {
+					api_key_id: id,
+				},
+			});
+			
 			return c.json(newKey, 200);
 		} catch (err) {
 			if (err instanceof Error) {

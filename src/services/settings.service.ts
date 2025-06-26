@@ -53,6 +53,8 @@ export class UserService {
 	public static deleteUserSettings = async (user_id: string) => {
 		const db = await DB.getInstance();
 
-		await db.deleteFrom("settings").where("user_id", "=", user_id).execute();
+		await db.deleteFrom("settings")
+			.where("user_id", "=", user_id)
+			.execute();
 	};
 }
