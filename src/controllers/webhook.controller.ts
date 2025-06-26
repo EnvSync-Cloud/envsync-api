@@ -16,7 +16,7 @@ export class WebhookController {
 
             // Webhooks can only be created by admins or masters in the organization
             if (!permissions.is_admin || !permissions.is_master || !permissions.have_webhook_access) {
-                return c.json({ error: "You do not have permission to create apps." }, 403);
+                return c.json({ error: "You do not have permission to create webhooks." }, 403);
             }
 
             if (!name || !url || !webhook_type) {
