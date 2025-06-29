@@ -186,6 +186,7 @@ export const envPitStateResponseSchema = z
 			key: z.string().openapi({ example: "DATABASE_URL" }),
 			value: z.string().openapi({ example: "postgresql://localhost:5432/db" }),
 			last_updated: z.string().openapi({ example: "2024-01-01T10:00:00Z" }),
+			operation: z.enum(["CREATE", "UPDATE", "DELETE"]).openapi({ example: "UPDATE" }),
 		}),
 	)
 	.openapi({ ref: "EnvPitStateResponse" });

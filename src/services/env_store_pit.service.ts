@@ -188,7 +188,7 @@ export class EnvStorePiTService {
 			.execute();
 
 		// Replay the changes to build the state at the target point in time
-		const envState = new Map<string, { key: string; value: string; last_updated: Date }>();
+		const envState = new Map<string, { key: string; value: string; last_updated: Date, operation: string }>();
 
 		for (const change of allChanges) {
 			const operation = change.operation || "UPDATE";
@@ -200,6 +200,7 @@ export class EnvStorePiTService {
 						key: change.key,
 						value: change.value,
 						last_updated: change.created_at,
+						operation: change.operation
 					});
 					break;
 				case "DELETE":
@@ -248,7 +249,7 @@ export class EnvStorePiTService {
 			.execute();
 
 		// Replay changes to build state
-		const envState = new Map<string, { key: string; value: string; last_updated: Date }>();
+		const envState = new Map<string, { key: string; value: string; last_updated: Date, operation: string }>();
 
 		for (const change of allChanges) {
 			const operation = change.operation || "UPDATE";
@@ -260,6 +261,7 @@ export class EnvStorePiTService {
 						key: change.key,
 						value: change.value,
 						last_updated: change.created_at,
+						operation: change.operation
 					});
 					break;
 				case "DELETE":
