@@ -1,3 +1,5 @@
+import { IncomingWebhook } from "@slack/webhook";
+
 export const slackWebhook = (
     url: string,
     payload: {
@@ -12,6 +14,8 @@ export const slackWebhook = (
         url_for_entity_in_question: string;
     }
 ) => {
+    const webhook = new IncomingWebhook(url);
+
     const templateText = {
         blocks: [
             {
@@ -63,22 +67,13 @@ export const slackWebhook = (
             }
         ]
     }
-
-    return fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(templateText)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Discord webhook failed with status ${response.status}`);
-        }
-        return response.json();
-    })
-    .catch(error => {
-        console.error("Error triggering Discord webhook:", error);
-        throw error;
-    });
+    try {
+        return webhook.send({
+            text: "New Activity via *Slack* on *EnvSync*",
+            blocks: templateText.blocks
+        });
+    } catch (error) {
+        console.error("Failed to send Slack webhook:", error);
+        throw error; // Re-throw the error to ensure the caller is aware of the failure
+    }
 }

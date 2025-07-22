@@ -1,6 +1,6 @@
 {
 	"name": "envsync-api",
-	"version": "0.3.6",
+	"version": "0.3.7",
 	"type": "module",
 	"module": "index.ts",
 	"scripts": {
@@ -16,6 +16,7 @@
 		"@aws-sdk/lib-storage": "^3.821.0",
 		"@hono/zod-validator": "^0.7.0",
 		"@scalar/hono-api-reference": "^0.9.1",
+		"@slack/webhook": "^7.0.5",
 		"auth0": "^4.24.0",
 		"hono": "^4.7.11",
 		"hono-openapi": "^0.4.8",

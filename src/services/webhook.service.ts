@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import { DB } from "@/libs/db";
 import { WebhookHandler } from "@/libs/webhooks";
 import { config } from "@/utils/env";
+import { JsonValue } from "@/libs/db";
+import infoLogs, { LogTypes } from "@/libs/logger";
 
 const urlSetMap = {
     apps: config.DASHBOARD_URL + "/applications",
@@ -48,7 +50,7 @@ export class WebhookService {
                 org_id,
                 user_id,
                 url,
-                event_types: event_types,
+                event_types: new JsonValue(event_types),
                 is_active: true,
                 webhook_type,
                 app_id,
@@ -154,15 +156,21 @@ export class WebhookService {
         const webhooks = await db
             .selectFrom("webhook_store")
             .selectAll()
-            .where("event_types", "in", [payload.event_type])
             .where("org_id", "=", payload.org_id)
             .where("is_active", "=", true)
+            .where("event_types", "@>", new JsonValue([payload.event_type]))
             .execute();
 
         if (webhooks.length === 0) {
             return;
         }
         else {
+            infoLogs(
+                `Triggering webhooks for event: ${payload.event_type}, org_id: ${payload.org_id}, app_id: ${payload.app_id}, user_id: ${payload.user_id}`,
+                LogTypes.LOGS,
+                "triggerWebhook"
+            )
+
             await Promise.all(webhooks.map(async (webhook) => {
                 const org = await db
                     .selectFrom("orgs")
@@ -274,7 +282,7 @@ export class WebhookService {
                         {
                             event_type: payload.event_type,
                             org_name: org.name,
-                            app_name: app?.name,
+                            app_name: app?.name || "",
                             user_name: user.full_name || user.email,
                             webhook_name: webhook.name,
                             linked_to_entity: webhook.linked_to,
@@ -291,7 +299,7 @@ export class WebhookService {
                         {
                             event_type: payload.event_type,
                             org_name: org.name,
-                            app_name: app?.name,
+                            app_name: app?.name ?? "",
                             user_name: user.full_name || user.email,
                             webhook_name: webhook.name,
                             linked_to_entity: webhook.linked_to,

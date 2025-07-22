@@ -713,6 +713,20 @@ export class EnvController {
 				to_pit_id: to_pit_id as string,
 			});
 
+			// Log the retrieval of the environment diff
+			await AuditLogService.notifyAuditSystem({
+				action: "env_variable_diff_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				message: `Environment diff viewed from PiT ${from_pit_id} to ${to_pit_id} in app ${app_id} for environment type ${env_type_id}.`,
+				details: {
+					app_id,
+					env_type_id,
+					from_pit_id,
+					to_pit_id,
+				},
+			});
+
 			return c.json(diff);
 		} catch (err) {
 			if (err instanceof Error) {
@@ -744,6 +758,20 @@ export class EnvController {
 				env_type_id,
 				key,
 				limit: parseInt(limit as string),
+			});
+
+			// Log the retrieval of the variable timeline
+			await AuditLogService.notifyAuditSystem({
+				action: "env_variable_timeline_viewed",
+				org_id,
+				user_id: c.get("user_id"),
+				message: `Variable timeline viewed for key ${key} in app ${app_id} for environment type ${env_type_id}.`,
+				details: {
+					app_id,
+					env_type_id,
+					key,
+					limit: parseInt(limit as string),
+				},
 			});
 
 			return c.json(timeline);
