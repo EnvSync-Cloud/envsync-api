@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 import { DB } from "@/libs/db";
 import { WebhookHandler } from "@/libs/webhooks";
 import { config } from "@/utils/env";
-import { JsonValue } from "@/libs/db"
+import { JsonValue } from "@/libs/db";
+import infoLogs, { LogTypes } from "@/libs/logger";
 
 const urlSetMap = {
     apps: config.DASHBOARD_URL + "/applications",
@@ -164,8 +165,10 @@ export class WebhookService {
             return;
         }
         else {
-            console.log(
-                `Triggering webhooks for event: ${payload.event_type}, org_id: ${payload.org_id}, app_id: ${payload.app_id}, user_id: ${payload.user_id}`
+            infoLogs(
+                `Triggering webhooks for event: ${payload.event_type}, org_id: ${payload.org_id}, app_id: ${payload.app_id}, user_id: ${payload.user_id}`,
+                LogTypes.LOGS,
+                "triggerWebhook"
             )
 
             await Promise.all(webhooks.map(async (webhook) => {
