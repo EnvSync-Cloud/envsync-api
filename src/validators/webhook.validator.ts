@@ -8,7 +8,7 @@ export const createWebhookRequestSchema = z
         event_types: z.array(z.string()).openapi({ example: ["env_created", "env_updated"] }),
         webhook_type: z.enum(["DISCORD", "SLACK", "CUSTOM"]).openapi({ example: "CUSTOM" }),
         linked_to: z.enum(["org", "app"]).default("org").openapi({ example: "org" }),
-        app_id: z.string().optional().openapi({ example: "app_123" }),
+        app_id: z.string().optional().nullable().openapi({ example: "app_123" }),
     })
     .openapi({ ref: "CreateWebhookRequest" });
 

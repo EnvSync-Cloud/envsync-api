@@ -26,7 +26,12 @@ type EnvStoreAuditActions =
 	| "envs_rollback_pit"
 	| "envs_rollback_timestamp"
 	| "env_variable_rollback_pit"
-	| "env_variable_rollback_timestamp";
+	| "env_variable_rollback_timestamp"
+	| "env_variable_timeline_viewed"
+	| "env_variable_diff_viewed"
+	| "env_variable_history_viewed"
+	| "envs_pit_viewed"
+	| "envs_timestamp_viewed";
 
 type SecretStoreAuditActions =
 	| "secret_created"

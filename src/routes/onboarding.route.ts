@@ -258,7 +258,6 @@ app.delete(
 			},
 		},
 	}),
-	zValidator("json", deleteUserInviteResponseSchema),
 	OnboardingController.deleteUserInvite,
 );
 

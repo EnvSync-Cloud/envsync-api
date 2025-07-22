@@ -73,4 +73,14 @@ export const discordWebhook = (
         },
         body: JSON.stringify(templateText)
     })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Discord webhook failed with status ${response.status}`);
+        }
+        return response.json();
+    })
+    .catch(error => {
+        console.error("Error triggering Discord webhook:", error);
+        throw error;
+    });
 }

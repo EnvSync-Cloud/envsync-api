@@ -82,7 +82,7 @@ interface SecretStorePiTChangeRequest extends BaseTable {
 interface AuditLog extends BaseTable {
 	org_id: ColumnType<string>;
 	user_id: ColumnType<string>;
-	action: ColumnType<AuditActions>;
+	action: ColumnType<AuditActions | string>;
 	details: ColumnType<string>;
 	message: ColumnType<string>;
 }

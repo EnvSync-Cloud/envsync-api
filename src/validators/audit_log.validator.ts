@@ -1,9 +1,23 @@
+import { ActionCategories, ActionPastTimeOptions } from "@/services/audit_log.service";
 import z from "zod";
 import "zod-openapi/extend";
 
 export const getAuditLogsQuerySchema = z.object({
 	page: z.string().default("1").openapi({ example: "1" }),
 	per_page: z.string().default("20").openapi({ example: "20" }),
+	filter_by_user: z.string().optional().openapi({ example: "user_123" }),
+	filter_by_category: ActionCategories
+		.optional()
+		.openapi({
+			example: "app*",
+			description: "Filter by action category, e.g., 'app*', 'env*'",
+		}),
+	filter_by_past_time: ActionPastTimeOptions
+		.optional()
+		.openapi({
+			example: "last_30_days",
+			description: "Filter by past time, e.g., 'last_3_hours', 'last_24_hours', 'last_7_days', 'last_30_days', 'last_90_days', 'last_180_days', 'last_1_year', 'all_time'",
+		}),
 });
 
 export const getAuditLogsSchema = z

@@ -10,7 +10,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn("org_id", "text", col => col.notNull())
     .addColumn("user_id", "text", col => col.notNull())
     .addColumn("url", "text", col => col.notNull())
-    .addColumn("event_types", "json", col => col.notNull().defaultTo("[]"))
+    .addColumn("event_types", "jsonb", col => col.notNull().defaultTo("[]"))
     .addColumn("is_active", "boolean", col => col.notNull().defaultTo(false))
     .addColumn("webhook_type", "text", col => col.notNull())
     .addColumn("app_id", "text")
