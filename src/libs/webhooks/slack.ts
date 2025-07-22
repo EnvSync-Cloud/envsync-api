@@ -67,9 +67,13 @@ export const slackWebhook = (
             }
         ]
     }
-
-    return webhook.send({
-        text: "New Activity via *Slack* on *EnvSync*",
-        blocks: templateText.blocks
-    });
+    try {
+        return webhook.send({
+            text: "New Activity via *Slack* on *EnvSync*",
+            blocks: templateText.blocks
+        });
+    } catch (error) {
+        console.error("Failed to send Slack webhook:", error);
+        throw error; // Re-throw the error to ensure the caller is aware of the failure
+    }
 }
