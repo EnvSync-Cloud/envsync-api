@@ -90,7 +90,7 @@ export class AuditLogService {
 	) => {
 		const db = await DB.getInstance();
 
-		let auditLogsQuery = await db
+		let auditLogsQuery = db
 			.selectFrom("audit_log")
 			.selectAll()
 			.where("org_id", "=", org_id)
@@ -98,7 +98,7 @@ export class AuditLogService {
 			.limit(per_page)
 			.offset((page - 1) * per_page)
 
-		let totalCountQuery = await db
+		let totalCountQuery = db
 			.selectFrom("audit_log")
 			.select(db.fn.count<number>("id").as("count"))
 			.where("org_id", "=", org_id)
