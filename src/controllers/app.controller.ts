@@ -97,7 +97,7 @@ export class AppController {
 				app_id: app.id,
 			});
 
-			return c.json({ app, env_types, envCount, secretCount });
+			return c.json({ ...app, env_types, envCount, secretCount });
 		} catch (err) {
 			if (err instanceof Error) {
 				return c.json({ error: err.message }, 500);
